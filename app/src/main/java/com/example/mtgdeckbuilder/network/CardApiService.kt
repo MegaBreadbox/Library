@@ -7,5 +7,5 @@ interface CardApiService {
     @GET("cards/search")
     suspend fun getCards(
         @Query("q") q : String
-    ): Card
+    ): CardList
 }

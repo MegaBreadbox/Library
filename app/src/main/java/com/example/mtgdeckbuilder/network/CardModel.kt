@@ -4,10 +4,28 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Card (
+data class CardList (
     @SerialName(value = "has_more")
     val hasMore: Boolean,
     @SerialName(value = "next_page")
     val nextPage: String,
+    val data: Card
 
+)
+
+@Serializable
+data class Card (
+    @SerialName(value = "image_uris")
+    val imageUris: CardImage,
+    val cmc: Int,
+    @SerialName(value = "color_identity")
+    val colorIndentity: Array<String>
+
+)
+
+@Serializable
+data class CardImage (
+    val normal: String,
+    val large: String,
+    val png: String
 )
