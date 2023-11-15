@@ -2,6 +2,7 @@ package com.example.mtgdeckbuilder.data
 
 import com.example.mtgdeckbuilder.network.CardApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -12,6 +13,7 @@ interface AppContainer {
 
 class DefaultAppContainer : AppContainer {
 
+    @OptIn(ExperimentalSerializationApi::class)
     private val customJson = Json {
         ignoreUnknownKeys = true
         explicitNulls = false

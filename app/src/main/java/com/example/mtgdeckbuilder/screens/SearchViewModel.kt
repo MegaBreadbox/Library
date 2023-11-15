@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mtgdeckbuilder.CardListApplication
 import com.example.mtgdeckbuilder.data.CardListRepository
 import com.example.mtgdeckbuilder.network.CardList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -29,18 +30,29 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
     var userText by mutableStateOf("")
         private set
 
+    private lateinit var currentCardList: CardList
+    private lateinit var nextPageCardList: CardList
 
     fun initializeCardList(input: String) {
         viewModelScope.launch {
             cardListUiState = try {
-                val result = cardListRepository.getCardList(input)
-                CardListUiState.Success(cardList = result)
+                delay(50)
+                currentCardList = cardListRepository.getCardList(input)
+                CardListUiState.Success(cardList = currentCardList)
             } catch (e: IOException) {
                 CardListUiState.Error
             }
         }
     }
-
+/*
+    fun nextPage() {
+        viewModelScope.launch {
+            delay(50)
+            nextPageCardList = currentCardList.nextPage.let { cardListRepository.nextPage(it) }
+            CardListUiState.Success(cardList = nextPageCardList)
+        }
+    }
+*/
     fun updateUserText(input: String) {
         userText = input
     }

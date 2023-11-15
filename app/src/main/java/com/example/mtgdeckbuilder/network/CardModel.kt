@@ -8,8 +8,8 @@ data class CardList (
     @SerialName(value = "has_more")
     val hasMore: Boolean,
     @SerialName(value = "next_page")
-    val nextPage: String,
-    val data: Card
+    val nextPage: String?,
+    val data: Array<Card>
 
 )
 
@@ -17,7 +17,7 @@ data class CardList (
 data class Card (
     @SerialName(value = "image_uris")
     val imageUris: CardImage,
-    val cmc: Int,
+    val cmc: Float,
     @SerialName(value = "color_identity")
     val colorIndentity: Array<String>
 

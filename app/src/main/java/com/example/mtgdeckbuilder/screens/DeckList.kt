@@ -18,10 +18,7 @@ fun deckList() {
 @Composable
 fun deckEntry() {
     Card(){
-        Image(
-            painter = {},
-            contentDescription = null
-        )
+
         Text(
             text = ""
         )
