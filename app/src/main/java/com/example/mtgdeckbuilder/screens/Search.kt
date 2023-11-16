@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGri
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
@@ -49,6 +51,7 @@ fun searchScreen(
         when (val searchUiState = searchViewModel.cardListUiState) {
             is CardListUiState.Success ->
                 cardList(
+                    initializePage = { searchViewModel.nextPage() },
                     cardList = searchUiState.cardList,
                     nextPage = searchUiState.cardList,
                     onClick = {}
@@ -93,6 +96,7 @@ fun searchBar(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun cardList(
+    initializePage: () -> Unit,
     cardList: CardList,
     nextPage: CardList,
     onClick: () -> Unit,
@@ -103,8 +107,14 @@ fun cardList(
         rows = StaggeredGridCells.Adaptive(minSize = 240.dp),
         modifier = modifier.fillMaxSize()
     ) {
-        items(cardImageArray) { entry -> entry
-            cardEntry(entry.imageUris)
+        itemsIndexed(cardImageArray) { index, entry -> entry
+            if(index == 39){
+                initializePage()
+                cardImageArray = nextPage.data
+                entry.imageUris?.let { cardEntry(cardImage = it) }
+            } else {
+                entry.imageUris?.let { cardEntry(it) }
+            }
         }
     }
 }

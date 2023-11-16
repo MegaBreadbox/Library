@@ -44,7 +44,7 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
             }
         }
     }
-/*
+
     fun nextPage() {
         viewModelScope.launch {
             delay(50)
@@ -52,7 +52,7 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
             CardListUiState.Success(cardList = nextPageCardList)
         }
     }
-*/
+
     fun updateUserText(input: String) {
         userText = input
     }

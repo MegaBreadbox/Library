@@ -16,7 +16,7 @@ data class CardList (
 @Serializable
 data class Card (
     @SerialName(value = "image_uris")
-    val imageUris: CardImage,
+    val imageUris: CardImage?,
     val cmc: Float,
     @SerialName(value = "color_identity")
     val colorIndentity: Array<String>
