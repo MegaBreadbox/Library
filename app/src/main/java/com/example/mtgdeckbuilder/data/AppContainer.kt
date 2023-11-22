@@ -19,7 +19,7 @@ class DefaultAppContainer : AppContainer {
         explicitNulls = false
     }
 
-    private val baseUrl = "https://api.scryfall.com"
+    private val baseUrl = "https://api.scryfall.com/"
 
     private val retrofit = Retrofit.Builder()
         .addConverterFactory(customJson.asConverterFactory("application/json".toMediaType()))

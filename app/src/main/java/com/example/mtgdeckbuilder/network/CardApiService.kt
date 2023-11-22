@@ -1,9 +1,11 @@
 package com.example.mtgdeckbuilder.network
 
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface CardApiService {
     @GET("cards/search")
@@ -11,9 +13,9 @@ interface CardApiService {
         @Query("q") q : String
     ): CardList
 
-    @GET("{nextPage}")
+    @GET
     suspend fun nextPage(
-        @Path("nextPage") nextPage: String
+        @Url url: String?
     ): CardList
 
 }

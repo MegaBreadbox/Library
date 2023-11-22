@@ -13,6 +13,6 @@ class NetworkCardListRepository(
 ): CardListRepository {
     override suspend fun getCardList(input: String): CardList = cardApiService.getCards(input)
 
-    override suspend fun nextPage(nextPage: String?): CardList = cardApiService.nextPage(nextPage?.drop(24)?: "")
+    override suspend fun nextPage(nextPage: String?): CardList = cardApiService.nextPage(nextPage?: "")
 
 }

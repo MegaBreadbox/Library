@@ -47,9 +47,17 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
 
     fun nextPage() {
         viewModelScope.launch {
-            delay(50)
-            nextPageCardList = currentCardList.nextPage.let { cardListRepository.nextPage(it) }
-            CardListUiState.Success(cardList = nextPageCardList)
+            cardListUiState = try {
+                delay(50)
+                if(currentCardList.hasMore) {
+                    nextPageCardList =
+                        cardListRepository.nextPage(currentCardList.nextPage)
+                    currentCardList = nextPageCardList
+                }
+                CardListUiState.Success(cardList = nextPageCardList)
+            } catch (e: IOException) {
+                CardListUiState.Error
+            }
         }
     }
 
