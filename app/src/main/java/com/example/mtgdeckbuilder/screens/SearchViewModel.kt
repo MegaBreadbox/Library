@@ -32,12 +32,14 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
 
     private lateinit var currentCardList: CardList
     private lateinit var nextPageCardList: CardList
+    private val cardPages: MutableList<CardList> = mutableListOf()
 
     fun initializeCardList(input: String) {
         viewModelScope.launch {
             cardListUiState = try {
                 delay(50)
                 currentCardList = cardListRepository.getCardList(input)
+                addToList(currentCardList)
                 CardListUiState.Success(cardList = currentCardList)
             } catch (e: IOException) {
                 CardListUiState.Error
@@ -53,12 +55,41 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
                     nextPageCardList =
                         cardListRepository.nextPage(currentCardList.nextPage)
                     currentCardList = nextPageCardList
+                    addToList(currentCardList)
+                    CardListUiState.Success(cardList = nextPageCardList)
+                } else {
+                    CardListUiState.Success(cardList = currentCardList)
                 }
-                CardListUiState.Success(cardList = nextPageCardList)
+
             } catch (e: IOException) {
                 CardListUiState.Error
             }
         }
+    }
+
+    fun previousPage() {
+        viewModelScope.launch {
+            cardListUiState = try {
+                delay(50)
+                if(cardPages.size > 1){
+                    removeLatest()
+                    currentCardList = cardPages[cardPages.size - 1]
+                    CardListUiState.Success(cardList = currentCardList)
+                } else {
+                    CardListUiState.Success(cardList = currentCardList)
+                }
+            } catch (e: IOException) {
+                CardListUiState.Error
+            }
+        }
+    }
+
+    private fun addToList(cardList: CardList){
+        cardPages.add(cardList)
+    }
+
+    private fun removeLatest(){
+        cardPages.removeAt(cardPages.size - 1)
     }
 
     fun updateUserText(input: String) {

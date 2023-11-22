@@ -16,9 +16,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -55,6 +59,7 @@ fun searchScreen(
             is CardListUiState.Success ->
                 cardList(
                     initializePage = { searchViewModel.nextPage() },
+                    loadPreviousPage = { searchViewModel.previousPage() },
                     cardList = searchUiState.cardList,
                     onClick = {}
                 )
@@ -98,6 +103,7 @@ fun searchBar(
 @Composable
 fun cardList(
     initializePage: () -> Unit,
+    loadPreviousPage: () -> Unit,
     cardList: CardList,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -106,8 +112,14 @@ fun cardList(
 
 
     Column {
-        load{
-            initializePage()
+        Row {
+            loadPrevious{
+                loadPreviousPage()
+            }
+            Spacer(modifier = Modifier.weight(1F))
+            load {
+                initializePage()
+            }
         }
         LazyHorizontalStaggeredGrid(
             rows = StaggeredGridCells.Adaptive(minSize = 240.dp),
@@ -125,8 +137,21 @@ fun cardList(
 @Composable
 fun load(initializePage: () -> Unit) {
     Button(onClick = { initializePage() }) {
-        Text("load more")
+        Icon(
+            imageVector = Icons.Rounded.ArrowForward,
+            contentDescription = stringResource(R.string.next_page)
+        )
     }
+}
+@Composable
+fun loadPrevious(loadPreviousPage: () -> Unit) {
+    Button(onClick = { loadPreviousPage() }) {
+        Icon(
+            imageVector = Icons.Rounded.ArrowBack,
+            contentDescription = stringResource(R.string.load_previous)
+        )
+    }
+
 }
 @Composable
 fun textComp(page: String?){
