@@ -4,4 +4,5 @@
     <string name="search">Search</string>
     <string name="next_page">next page</string>
     <string name="load_previous">load previous</string>
+    <string name="pageNumber">Page %1$s</string>
 </resources>

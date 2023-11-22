@@ -2,6 +2,7 @@ package com.example.mtgdeckbuilder.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +43,7 @@ import com.example.mtgdeckbuilder.R
 import com.example.mtgdeckbuilder.network.Card
 import com.example.mtgdeckbuilder.network.CardImage
 import com.example.mtgdeckbuilder.network.CardList
+import kotlinx.coroutines.launch
 
 @Composable
 fun searchScreen(
@@ -61,6 +64,7 @@ fun searchScreen(
                     initializePage = { searchViewModel.nextPage() },
                     loadPreviousPage = { searchViewModel.previousPage() },
                     cardList = searchUiState.cardList,
+                    pageListSize = searchViewModel.currentListSize(),
                     onClick = {}
                 )
             is CardListUiState.Error -> null
@@ -105,21 +109,33 @@ fun cardList(
     initializePage: () -> Unit,
     loadPreviousPage: () -> Unit,
     cardList: CardList,
+    pageListSize: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state = rememberLazyStaggeredGridState()
-
+    val coroutineScope = rememberCoroutineScope()
 
     Column {
-        Row {
-            loadPrevious{
-                loadPreviousPage()
-            }
-            Spacer(modifier = Modifier.weight(1F))
-            load {
-                initializePage()
-            }
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+
+        ) {
+            loadPrevious(
+                loadPreviousPage = { loadPreviousPage() },
+                resetPosition = { coroutineScope.launch { state.scrollToItem(0) } },
+                pageListSize = pageListSize
+            )
+            Text(
+                text = stringResource(R.string.pageNumber, pageListSize),
+                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.large_padding))
+            )
+            //Spacer(modifier = Modifier.weight(1F))
+            load(
+                initializePage = { initializePage() },
+                resetPosition = { coroutineScope.launch { state.scrollToItem(0) } }
+            )
         }
         LazyHorizontalStaggeredGrid(
             rows = StaggeredGridCells.Adaptive(minSize = 240.dp),
@@ -135,8 +151,11 @@ fun cardList(
 }
 
 @Composable
-fun load(initializePage: () -> Unit) {
-    Button(onClick = { initializePage() }) {
+fun load(
+    initializePage: () -> Unit,
+    resetPosition: () -> Unit
+) {
+    Button(onClick = { initializePage(); resetPosition() }) {
         Icon(
             imageVector = Icons.Rounded.ArrowForward,
             contentDescription = stringResource(R.string.next_page)
@@ -144,8 +163,14 @@ fun load(initializePage: () -> Unit) {
     }
 }
 @Composable
-fun loadPrevious(loadPreviousPage: () -> Unit) {
-    Button(onClick = { loadPreviousPage() }) {
+fun loadPrevious(
+    loadPreviousPage: () -> Unit,
+    resetPosition: () -> Unit,
+    pageListSize: Int
+) {
+    Button(
+        enabled = pageListSize > 1,
+        onClick = { loadPreviousPage(); resetPosition() }) {
         Icon(
             imageVector = Icons.Rounded.ArrowBack,
             contentDescription = stringResource(R.string.load_previous)

@@ -32,6 +32,7 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
 
     private lateinit var currentCardList: CardList
     private lateinit var nextPageCardList: CardList
+
     private val cardPages: MutableList<CardList> = mutableListOf()
 
     fun initializeCardList(input: String) {
@@ -83,6 +84,9 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
             }
         }
     }
+
+    fun currentListSize(): Int = cardPages.size
+
 
     private fun addToList(cardList: CardList){
         cardPages.add(cardList)
