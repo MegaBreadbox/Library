@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mtgdeckbuilder.CardListApplication
 import com.example.mtgdeckbuilder.data.CardListRepository
+import com.example.mtgdeckbuilder.network.Card
 import com.example.mtgdeckbuilder.network.CardList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,6 +32,10 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
         private set
 
     var loadingImage by mutableStateOf(false)
+        private set
+
+
+    lateinit var currentCard: Card
         private set
 
     private lateinit var currentCardList: CardList
@@ -87,6 +92,10 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
                 CardListUiState.Error
             }
         }
+    }
+
+    fun onImageClick(card: Card) {
+        currentCard = card
     }
 
     fun currentListSize(): Int = cardPages.size

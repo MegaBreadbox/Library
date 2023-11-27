@@ -35,9 +35,11 @@ fun DeckBuilderMenu(
                 searchScreen(
                     searchViewModel = searchViewModel,
                     onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) },
-                    detailNavigation = {}
+                    detailNavigation = { navController.navigate(CardListScreen.Details.name) },
+                    updateCard =  { searchViewModel.onImageClick(it) }
                 )
             }
+
         }
     }
 }

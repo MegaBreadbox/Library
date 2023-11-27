@@ -1,6 +1,7 @@
 package com.example.mtgdeckbuilder.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,8 @@ import kotlinx.coroutines.launch
 fun searchScreen(
     searchViewModel: SearchViewModel,
     detailNavigation: () -> Unit,
-    onKeyboardSearch: () -> Unit
+    onKeyboardSearch: () -> Unit,
+    updateCard: (card: Card) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -68,7 +70,9 @@ fun searchScreen(
                     cardList = searchUiState.cardList,
                     currentlyLoading = searchViewModel.loadingImage,
                     pageListSize = searchViewModel.currentListSize(),
-                    onClick = { detailNavigation() }
+                    onClick = detailNavigation,
+                    updateCard = updateCard
+
                 )
             is CardListUiState.Error -> null
             is CardListUiState.Loading -> null
@@ -115,6 +119,7 @@ fun cardList(
     currentlyLoading: Boolean,
     pageListSize: Int,
     onClick: () -> Unit,
+    updateCard: (card: Card) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state = rememberLazyStaggeredGridState()
@@ -148,7 +153,7 @@ fun cardList(
             modifier = modifier.fillMaxSize()
         ) {
             items(cardList.data) {  entry ->
-                entry.imageUris?.let{ cardEntry(it) }
+                cardEntry(entry, onClick, updateCard)
             }
         }
 
@@ -196,12 +201,20 @@ fun textComp(page: String?){
 
 @Composable
 fun cardEntry(
-    cardImage: CardImage
+    card: Card,
+    onClick: () -> Unit,
+    updateCard: (card: Card) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Card() {
+    Card(
+        modifier = modifier.clickable(){
+            onClick()
+            updateCard(card)
+        }
+    ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(cardImage.large)
+                .data(card.imageUris?.large)
                 .build(),
             contentDescription = null,
         )
