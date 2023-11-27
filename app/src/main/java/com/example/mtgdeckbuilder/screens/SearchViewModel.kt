@@ -30,6 +30,9 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
     var userText by mutableStateOf("")
         private set
 
+    var loadingImage by mutableStateOf(false)
+        private set
+
     private lateinit var currentCardList: CardList
     private lateinit var nextPageCardList: CardList
 
@@ -51,17 +54,18 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
     fun nextPage() {
         viewModelScope.launch {
             cardListUiState = try {
+                loadingImage = true
                 delay(50)
                 if(currentCardList.hasMore) {
                     nextPageCardList =
                         cardListRepository.nextPage(currentCardList.nextPage)
                     currentCardList = nextPageCardList
                     addToList(currentCardList)
+                    loadingImage = false
                     CardListUiState.Success(cardList = nextPageCardList)
                 } else {
                     CardListUiState.Success(cardList = currentCardList)
                 }
-
             } catch (e: IOException) {
                 CardListUiState.Error
             }

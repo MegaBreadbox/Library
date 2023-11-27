@@ -34,7 +34,8 @@ fun DeckBuilderMenu(
             composable(CardListScreen.Search.name) {
                 searchScreen(
                     searchViewModel = searchViewModel,
-                    onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) }
+                    onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) },
+                    detailNavigation = {}
                 )
             }
         }

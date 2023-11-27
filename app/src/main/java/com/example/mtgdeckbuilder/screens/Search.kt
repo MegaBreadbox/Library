@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
@@ -48,6 +49,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun searchScreen(
     searchViewModel: SearchViewModel,
+    detailNavigation: () -> Unit,
     onKeyboardSearch: () -> Unit
 ) {
     Column(
@@ -64,8 +66,9 @@ fun searchScreen(
                     initializePage = { searchViewModel.nextPage() },
                     loadPreviousPage = { searchViewModel.previousPage() },
                     cardList = searchUiState.cardList,
+                    currentlyLoading = searchViewModel.loadingImage,
                     pageListSize = searchViewModel.currentListSize(),
-                    onClick = {}
+                    onClick = { detailNavigation() }
                 )
             is CardListUiState.Error -> null
             is CardListUiState.Loading -> null
@@ -90,8 +93,8 @@ fun searchBar(
         TextField(
             value = searchViewModel.userText,
             singleLine = true,
-            onValueChange = { input -> searchViewModel.updateUserText(input)},
-            label = { Text(stringResource(R.string.search))},
+            onValueChange = { input -> searchViewModel.updateUserText(input) },
+            label = { Text(stringResource(R.string.search)) },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Search
             ),
@@ -109,6 +112,7 @@ fun cardList(
     initializePage: () -> Unit,
     loadPreviousPage: () -> Unit,
     cardList: CardList,
+    currentlyLoading: Boolean,
     pageListSize: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -123,6 +127,7 @@ fun cardList(
 
         ) {
             loadPrevious(
+                currentlyLoading = currentlyLoading,
                 loadPreviousPage = { loadPreviousPage() },
                 resetPosition = { coroutineScope.launch { state.scrollToItem(0) } },
                 pageListSize = pageListSize
@@ -131,8 +136,8 @@ fun cardList(
                 text = stringResource(R.string.pageNumber, pageListSize),
                 modifier = Modifier.padding(top = dimensionResource(id = R.dimen.large_padding))
             )
-            //Spacer(modifier = Modifier.weight(1F))
             load(
+                currentlyLoading = currentlyLoading,
                 initializePage = { initializePage() },
                 resetPosition = { coroutineScope.launch { state.scrollToItem(0) } }
             )
@@ -142,7 +147,7 @@ fun cardList(
             state = state,
             modifier = modifier.fillMaxSize()
         ) {
-            itemsIndexed(cardList.data) { index, entry ->
+            items(cardList.data) {  entry ->
                 entry.imageUris?.let{ cardEntry(it) }
             }
         }
@@ -152,10 +157,14 @@ fun cardList(
 
 @Composable
 fun load(
+    currentlyLoading: Boolean,
     initializePage: () -> Unit,
     resetPosition: () -> Unit
 ) {
-    Button(onClick = { initializePage(); resetPosition() }) {
+    Button(
+        enabled = !currentlyLoading,
+        onClick = { initializePage(); resetPosition(); }
+    ) {
         Icon(
             imageVector = Icons.Rounded.ArrowForward,
             contentDescription = stringResource(R.string.next_page)
@@ -164,13 +173,15 @@ fun load(
 }
 @Composable
 fun loadPrevious(
+    currentlyLoading: Boolean,
     loadPreviousPage: () -> Unit,
     resetPosition: () -> Unit,
     pageListSize: Int
 ) {
     Button(
-        enabled = pageListSize > 1,
-        onClick = { loadPreviousPage(); resetPosition() }) {
+        enabled = pageListSize > 1 && !currentlyLoading,
+        onClick = { loadPreviousPage(); resetPosition() }
+    ) {
         Icon(
             imageVector = Icons.Rounded.ArrowBack,
             contentDescription = stringResource(R.string.load_previous)
