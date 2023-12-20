@@ -91,7 +91,6 @@ fun searchBar(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxWidth()
     ){
-        //Spacer(Modifier.weight(.25F))
         Text(text = stringResource(R.string.search_for_cards))
         Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.medium_padding)))
         TextField(
@@ -106,7 +105,6 @@ fun searchBar(
                 onSearch = { onKeyboardSearch() }
             )
         )
-        //Spacer(Modifier.weight(.75F))
     }
 }
 
@@ -207,7 +205,7 @@ fun cardEntry(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.clickable(){
+        modifier = modifier.clickable() {
             onClick()
             updateCard(card)
         }
