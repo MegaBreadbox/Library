@@ -113,13 +113,4 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
         userText = input
     }
 
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as CardListApplication)
-                val cardListRepository = application.container.cardListRepository
-                SearchViewModel(cardListRepository = cardListRepository)
-            }
-        }
-    }
 }

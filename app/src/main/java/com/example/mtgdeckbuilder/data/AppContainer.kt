@@ -1,5 +1,6 @@
 package com.example.mtgdeckbuilder.data
 
+import android.content.Context
 import com.example.mtgdeckbuilder.network.CardApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -9,9 +10,10 @@ import retrofit2.Retrofit
 
 interface AppContainer {
     val cardListRepository: CardListRepository
+    val deckRepository: DeckRepository
 }
 
-class DefaultAppContainer : AppContainer {
+class DefaultAppContainer(private val context: Context) : AppContainer {
 
     @OptIn(ExperimentalSerializationApi::class)
     private val customJson = Json {
@@ -32,5 +34,9 @@ class DefaultAppContainer : AppContainer {
 
     override val cardListRepository: CardListRepository by lazy {
         NetworkCardListRepository(retrofitService)
+    }
+
+    override val deckRepository: DeckRepository by lazy {
+        OfflineDeckRepository(DeckDatabase.getDatabase(context).deckDao())
     }
 }

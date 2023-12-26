@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.example.mtgdeckbuilder.network.Card
 @Entity
 data class Deck(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
     val cards: List<Card>

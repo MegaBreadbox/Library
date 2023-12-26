@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mtgdeckbuilder.ViewModelProvider
 import com.example.mtgdeckbuilder.network.Card
 
 enum class CardListScreen() {
@@ -23,7 +24,7 @@ enum class CardListScreen() {
 @Composable
 fun DeckBuilderMenu(
     navController: NavHostController = rememberNavController(),
-    searchViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
+    searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
     Scaffold() {
         padding ->
