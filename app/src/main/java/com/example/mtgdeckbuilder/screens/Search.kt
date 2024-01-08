@@ -146,7 +146,7 @@ fun cardList(
             )
         }
         LazyHorizontalStaggeredGrid(
-            rows = StaggeredGridCells.Adaptive(minSize = 240.dp),
+            rows = StaggeredGridCells.Adaptive(minSize = dimensionResource(R.dimen.card_image)),
             state = state,
             modifier = modifier.fillMaxSize()
         ) {

@@ -22,6 +22,9 @@ interface DeckDao {
     @Update
     suspend fun updateName(deck: Deck)
 
+    @Query("SELECT * FROM Deck ORDER BY name ASC")
+    fun getDeckList(): Flow<List<Deck>>
+
     @Query("UPDATE Deck SET cards = :cards WHERE id = :id")
     fun updateDeck(cards: List<Card>, id: Int): Flow<Deck>
 

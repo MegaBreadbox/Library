@@ -8,5 +8,6 @@ data class Deck(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
+    val deckBoxColor: Int,
     val cards: List<Card>
 )

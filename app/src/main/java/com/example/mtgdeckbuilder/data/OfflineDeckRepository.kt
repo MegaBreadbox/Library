@@ -20,4 +20,8 @@ class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {
         deckDao.updateDeck(cards,id)
     }
 
+    override fun getDeckListStream(): Flow<List<Deck>> {
+        return deckDao.getDeckList()
+    }
+
 }

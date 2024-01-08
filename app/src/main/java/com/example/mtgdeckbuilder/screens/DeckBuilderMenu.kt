@@ -24,7 +24,8 @@ enum class CardListScreen() {
 @Composable
 fun DeckBuilderMenu(
     navController: NavHostController = rememberNavController(),
-    searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory)
+    searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory),
+    deckListViewModel: DeckListViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
     Scaffold() {
         padding ->

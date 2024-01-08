@@ -13,4 +13,6 @@ interface DeckRepository {
 
     suspend fun updateDeck(cards: List<Card>, id: Int)
 
+    fun getDeckListStream(): Flow<List<Deck>>
+
 }

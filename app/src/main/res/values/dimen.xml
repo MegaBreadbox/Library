@@ -2,4 +2,6 @@
 <resources>
     <dimen name="medium_padding">8dp</dimen>
     <dimen name="large_padding">16dp</dimen>
+    <dimen name="deck_image">128dp</dimen>
+    <dimen name="card_image">240dp</dimen>
 </resources>
