@@ -31,9 +31,14 @@ fun DeckBuilderMenu(
         padding ->
         NavHost(
             navController = navController,
-            startDestination = CardListScreen.Search.name,
+            startDestination = CardListScreen.Deck.name,
             modifier = Modifier.padding(padding)
         ){
+            composable(CardListScreen.Deck.name) {
+                deckListScreen(
+                    deckListViewModel = deckListViewModel,
+                )
+            }
             composable(CardListScreen.Search.name) {
                 searchScreen(
                     searchViewModel = searchViewModel,

@@ -3,8 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
 
     //Serialization
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
-    id ("com.google.devtools.ksp") version "1.5.31-1.0.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
+    id ("com.google.devtools.ksp") version "1.9.22-1.0.16"
 }
 
 android {
@@ -34,17 +34,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.9"
     }
     packaging {
         resources {
@@ -62,7 +62,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
     //Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     //Serialization Converter
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")

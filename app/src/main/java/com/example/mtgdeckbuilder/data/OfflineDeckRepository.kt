@@ -16,10 +16,6 @@ class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {
         deckDao.updateName(deck)
     }
 
-    override suspend fun updateDeck(cards: List<Card>, id: Int) {
-        deckDao.updateDeck(cards,id)
-    }
-
     override fun getDeckListStream(): Flow<List<Deck>> {
         return deckDao.getDeckList()
     }

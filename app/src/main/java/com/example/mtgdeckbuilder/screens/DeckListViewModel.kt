@@ -44,7 +44,7 @@ class DeckListViewModel(private val deckRepository: DeckRepository): ViewModel()
 }
 
 fun DeckUiState.toDeck(): Deck{
-    return Deck(id = id, name = name, cards = cards, deckBoxColor = deckBoxColor)
+    return Deck(id = id, name = name, deckBoxColor = deckBoxColor)
 }
 
 data class DeckListUiState(
@@ -55,5 +55,4 @@ data class DeckUiState(
     val id: Int = 0,
     val name: String = "",
     val deckBoxColor: Int = R.drawable.deckbox_grey,
-    val cards: List<Card> = emptyList()
 )

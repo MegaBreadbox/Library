@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -30,22 +31,28 @@ import com.example.mtgdeckbuilder.R
 import com.example.mtgdeckbuilder.ViewModelProvider
 import com.example.mtgdeckbuilder.data.Deck
 import com.example.mtgdeckbuilder.ui.theme.MTGDeckBuilderTheme
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun deckListScreen(
     deckListViewModel: DeckListViewModel,
-    createDeck:() -> Unit,
     modifier: Modifier = Modifier
 ) {
     val deckListUiState by deckListViewModel.deckListUiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     Column(){
         Scaffold(
             modifier = modifier,
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { createDeck() },
+                    onClick = {
+                              coroutineScope.launch{
+                                  deckListViewModel.createDeck()
+                              }
+                    },
                     modifier = modifier
                 ) {
                     Icon(
