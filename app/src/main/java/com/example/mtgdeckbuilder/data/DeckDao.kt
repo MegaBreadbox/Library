@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.example.mtgdeckbuilder.network.Card
 import com.example.mtgdeckbuilder.network.CardList
@@ -24,6 +25,8 @@ interface DeckDao {
 
     @Query("SELECT * FROM Deck ORDER BY name ASC")
     fun getDeckList(): Flow<List<Deck>>
-
+    @Transaction
+    @Query("SELECT * FROM Deck")
+    fun getDeckWithCards(): Flow<List<DeckWithCards>>
 
 }

@@ -13,4 +13,6 @@ interface DeckRepository {
 
     fun getDeckListStream(): Flow<List<Deck>>
 
+    fun getDeckWithCards(): Flow<List<DeckWithCards>>
+
 }

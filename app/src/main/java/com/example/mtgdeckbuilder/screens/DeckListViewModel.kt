@@ -10,15 +10,19 @@ import com.example.mtgdeckbuilder.data.Deck
 import com.example.mtgdeckbuilder.data.DeckRepository
 import com.example.mtgdeckbuilder.data.OfflineDeckRepository
 import com.example.mtgdeckbuilder.network.Card
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 class DeckListViewModel(private val deckRepository: DeckRepository): ViewModel() {
 
-    var deckUiState: DeckUiState by mutableStateOf(DeckUiState())
-        private set
+    private val _deckUiState = MutableStateFlow(DeckUiState())
+    val deckUiState: StateFlow<DeckUiState> = _deckUiState.asStateFlow()
+
 
     val deckListUiState: StateFlow<DeckListUiState> =
         deckRepository.getDeckListStream().map { DeckListUiState(it) }
@@ -30,12 +34,17 @@ class DeckListViewModel(private val deckRepository: DeckRepository): ViewModel()
 
 
     suspend fun createDeck() {
-        deckRepository.addDeck(deckUiState.toDeck())
+        deckRepository.addDeck(_deckUiState.value.toDeck())
     }
 
     suspend fun updateDeckName(name: String) {
-        deckUiState = deckUiState.copy(name = name)
-        deckRepository.updateName(deckUiState.toDeck())
+        _deckUiState.update{ currentState ->
+            currentState.copy(
+                name = name
+            )
+
+        }
+        deckRepository.updateName(_deckUiState.value.toDeck())
     }
 
     companion object {
@@ -44,7 +53,7 @@ class DeckListViewModel(private val deckRepository: DeckRepository): ViewModel()
 }
 
 fun DeckUiState.toDeck(): Deck{
-    return Deck(id = id, name = name, deckBoxColor = deckBoxColor)
+    return Deck(deckId = id, name = name, deckBoxColor = deckBoxColor)
 }
 
 data class DeckListUiState(

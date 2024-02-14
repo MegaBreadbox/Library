@@ -24,7 +24,6 @@ enum class CardListScreen() {
 @Composable
 fun DeckBuilderMenu(
     navController: NavHostController = rememberNavController(),
-    searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory),
     deckListViewModel: DeckListViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
     Scaffold() {
@@ -41,14 +40,11 @@ fun DeckBuilderMenu(
             }
             composable(CardListScreen.Search.name) {
                 searchScreen(
-                    searchViewModel = searchViewModel,
-                    onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) },
                     detailNavigation = { navController.navigate(CardListScreen.Details.name) },
-                    updateCard =  { searchViewModel.onImageClick(it) }
                 )
             }
             composable(CardListScreen.Details.name) {
-                detailsScreen(card = searchViewModel.currentCard)
+                detailsScreen()
             }
         }
     }

@@ -39,9 +39,11 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mtgdeckbuilder.R
+import com.example.mtgdeckbuilder.ViewModelProvider
 import com.example.mtgdeckbuilder.network.Card
 import com.example.mtgdeckbuilder.network.CardImage
 import com.example.mtgdeckbuilder.network.CardList
@@ -49,17 +51,15 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun searchScreen(
-    searchViewModel: SearchViewModel,
     detailNavigation: () -> Unit,
-    onKeyboardSearch: () -> Unit,
-    updateCard: (card: Card) -> Unit
+    searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         searchBar(
             searchViewModel = searchViewModel,
-            onKeyboardSearch = onKeyboardSearch,
+            onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) },
         )
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding)))
         when (val searchUiState = searchViewModel.cardListUiState) {
@@ -71,7 +71,7 @@ fun searchScreen(
                     currentlyLoading = searchViewModel.loadingImage,
                     pageListSize = searchViewModel.currentListSize(),
                     onClick = detailNavigation,
-                    updateCard = updateCard
+                    updateCard = { searchViewModel.onImageClick(it)}
 
                 )
             is CardListUiState.Error -> null
