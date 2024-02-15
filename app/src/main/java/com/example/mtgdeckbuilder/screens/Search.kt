@@ -51,7 +51,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun searchScreen(
-    detailNavigation: () -> Unit,
+    detailNavigation: (String) -> Unit,
     searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
     Column(
@@ -70,8 +70,7 @@ fun searchScreen(
                     cardList = searchUiState.cardList,
                     currentlyLoading = searchViewModel.loadingImage,
                     pageListSize = searchViewModel.currentListSize(),
-                    onClick = detailNavigation,
-                    updateCard = { searchViewModel.onImageClick(it)}
+                    onClick = { detailNavigation(searchViewModel.cardToJson(it)) },
 
                 )
             is CardListUiState.Error -> null
@@ -116,8 +115,7 @@ fun cardList(
     cardList: CardList,
     currentlyLoading: Boolean,
     pageListSize: Int,
-    onClick: () -> Unit,
-    updateCard: (card: Card) -> Unit,
+    onClick: (Card) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state = rememberLazyStaggeredGridState()
@@ -151,7 +149,7 @@ fun cardList(
             modifier = modifier.fillMaxSize()
         ) {
             items(cardList.data) {  entry ->
-                cardEntry(entry, onClick, updateCard)
+                cardEntry(entry, { onClick(it) })
             }
         }
 
@@ -200,14 +198,12 @@ fun textComp(page: String?){
 @Composable
 fun cardEntry(
     card: Card,
-    onClick: () -> Unit,
-    updateCard: (card: Card) -> Unit,
+    onClick: (Card) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.clickable() {
-            onClick()
-            updateCard(card)
+            onClick(card)
         }
     ) {
         AsyncImage(

@@ -15,7 +15,10 @@ import com.example.mtgdeckbuilder.network.Card
 import com.example.mtgdeckbuilder.network.CardList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.IOException
+import java.net.URLEncoder
 
 sealed interface CardListUiState {
     data class Success(
@@ -93,9 +96,8 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
             }
         }
     }
-
-    fun onImageClick(card: Card) {
-        currentCard = card
+    fun cardToJson(input: Card): String {
+        return URLEncoder.encode(Json.encodeToString(input), "utf-8")
     }
 
     fun currentListSize(): Int = cardPages.size
