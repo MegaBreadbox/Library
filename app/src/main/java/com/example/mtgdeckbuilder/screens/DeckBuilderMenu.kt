@@ -26,18 +26,16 @@ enum class CardListScreen() {
 @Composable
 fun DeckBuilderMenu(
     navController: NavHostController = rememberNavController(),
-    deckListViewModel: DeckListViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
     Scaffold() {
         padding ->
         NavHost(
             navController = navController,
-            startDestination = CardListScreen.Search.name,
+            startDestination = CardListScreen.Deck.name,
             modifier = Modifier.padding(padding)
         ){
             composable(CardListScreen.Deck.name) {
                 deckListScreen(
-                    deckListViewModel = deckListViewModel,
                 )
             }
             composable(CardListScreen.Search.name) {

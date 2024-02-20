@@ -37,8 +37,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun deckListScreen(
-    deckListViewModel: DeckListViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    deckListViewModel: DeckListViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
     val deckListUiState by deckListViewModel.deckListUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
