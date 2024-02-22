@@ -36,6 +36,7 @@ fun DeckBuilderMenu(
         ){
             composable(CardListScreen.Deck.name) {
                 deckListScreen(
+                    searchNavigation = {/*To Do*/}
                 )
             }
             composable(CardListScreen.Search.name) {

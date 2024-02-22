@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Junction
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.example.mtgdeckbuilder.R
 import com.example.mtgdeckbuilder.network.Card
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

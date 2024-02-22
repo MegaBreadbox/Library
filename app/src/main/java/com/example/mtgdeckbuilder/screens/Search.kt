@@ -58,7 +58,8 @@ fun searchScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         searchBar(
-            searchViewModel = searchViewModel,
+            inputText = searchViewModel.userText,
+            onTextChange = { searchViewModel.updateUserText(it) },
             onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) },
         )
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding)))
@@ -82,7 +83,8 @@ fun searchScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun searchBar(
-    searchViewModel: SearchViewModel,
+    inputText: String,
+    onTextChange: (String) -> Unit,
     onKeyboardSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -93,9 +95,9 @@ fun searchBar(
         Text(text = stringResource(R.string.search_for_cards))
         Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.medium_padding)))
         TextField(
-            value = searchViewModel.userText,
+            value = inputText,
             singleLine = true,
-            onValueChange = { input -> searchViewModel.updateUserText(input) },
+            onValueChange = { input -> onTextChange(input) },
             label = { Text(stringResource(R.string.search)) },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Search

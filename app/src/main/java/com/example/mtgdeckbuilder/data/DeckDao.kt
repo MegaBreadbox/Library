@@ -15,13 +15,16 @@ import kotlinx.coroutines.flow.Flow
 interface DeckDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addDeck(deck: Deck)
+    suspend fun addDeck(deck: Deck): Long
 
     @Delete
     suspend fun removeDeck(deck: Deck)
 
     @Update
     suspend fun updateName(deck: Deck)
+
+    @Query("INSERT INTO Deck (name, deckBoxColor) VALUES (:name || ' ' || (SELECT COUNT(*) + 1 FROM Deck), :deckBoxColor)")
+    suspend fun createDeck(name: String, deckBoxColor: Int)
 
     @Query("SELECT * FROM Deck ORDER BY name ASC")
     fun getDeckList(): Flow<List<Deck>>
