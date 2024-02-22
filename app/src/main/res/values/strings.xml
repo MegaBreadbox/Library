@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">MTG deckBuilder</string>
     <string name="search_for_cards">Search for cards</string>
-    <string name="search">Search</string>
     <string name="next_page">next page</string>
     <string name="load_previous">load previous</string>
     <string name="pageNumber">Page %1$s</string>
