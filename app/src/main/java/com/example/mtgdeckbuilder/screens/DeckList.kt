@@ -65,6 +65,8 @@ fun deckListScreen(
         ) { innerPadding ->
             deckList(
                 deckList = deckListUiState.deckList,
+                searchNavigation = searchNavigation,
+                changeCurrentDeck = { deckListViewModel.changeSelectedDeck(it) },
                 modifier = modifier.padding(innerPadding)
             )
         }
@@ -74,13 +76,15 @@ fun deckListScreen(
 @Composable
 fun deckList(
     deckList: List<Deck>,
+    searchNavigation: () -> Unit,
+    changeCurrentDeck: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = dimensionResource(R.dimen.deck_image)),
     ){
         items(deckList) {deck ->
-            deckEntry(deck)
+            deckEntry(deck, searchNavigation, { changeCurrentDeck(it) })
 
         }
     }
@@ -89,11 +93,14 @@ fun deckList(
 @Composable
 fun deckEntry(
     deck: Deck,
+    searchNavigation: () -> Unit,
+    changeCurrentDeck: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.clickable(){
-
+            searchNavigation()
+            changeCurrentDeck(deck.deckId)
         }
 
     ){

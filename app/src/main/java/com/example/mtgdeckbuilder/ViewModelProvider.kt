@@ -14,7 +14,10 @@ import com.example.mtgdeckbuilder.screens.SearchViewModel
         }
 
         initializer {
-            DeckListViewModel(deckBuilderApplication().container.deckRepository)
+            DeckListViewModel(
+                deckBuilderApplication().container.deckRepository,
+                deckBuilderApplication().container.selectedDeckRepository
+            )
         }
 
     }

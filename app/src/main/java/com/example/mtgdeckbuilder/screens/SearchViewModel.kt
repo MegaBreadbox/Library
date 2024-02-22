@@ -17,6 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import retrofit2.HttpException
 import java.io.IOException
 import java.net.URLEncoder
 
@@ -26,6 +27,7 @@ sealed interface CardListUiState {
     ): CardListUiState
     object Loading : CardListUiState
     object Error : CardListUiState
+    object NoResults : CardListUiState
 }
 class SearchViewModel(private val cardListRepository: CardListRepository): ViewModel() {
     var cardListUiState : CardListUiState by mutableStateOf(CardListUiState.Loading)
@@ -35,10 +37,6 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
         private set
 
     var loadingImage by mutableStateOf(false)
-        private set
-
-
-    lateinit var currentCard: Card
         private set
 
     private lateinit var currentCardList: CardList
@@ -55,6 +53,8 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
                 CardListUiState.Success(cardList = currentCardList)
             } catch (e: IOException) {
                 CardListUiState.Error
+            } catch (e: HttpException) {
+                CardListUiState.NoResults
             }
         }
     }

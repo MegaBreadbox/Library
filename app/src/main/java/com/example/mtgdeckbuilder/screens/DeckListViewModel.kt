@@ -4,6 +4,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.Entity
@@ -11,6 +12,7 @@ import com.example.mtgdeckbuilder.R
 import com.example.mtgdeckbuilder.data.Deck
 import com.example.mtgdeckbuilder.data.DeckRepository
 import com.example.mtgdeckbuilder.data.OfflineDeckRepository
+import com.example.mtgdeckbuilder.data.SelectedDeckRepository
 import com.example.mtgdeckbuilder.network.Card
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,9 +22,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.prefs.Preferences
 
-class DeckListViewModel(private val deckRepository: DeckRepository): ViewModel() {
+class DeckListViewModel(
+    private val deckRepository: DeckRepository,
+    private val selectedDeckRepository: SelectedDeckRepository
+): ViewModel() {
+
     private val defaultDeck = Deck(
         name = "Deck",
         deckBoxColor = R.drawable.deckbox_grey
@@ -41,6 +49,12 @@ class DeckListViewModel(private val deckRepository: DeckRepository): ViewModel()
             name = defaultDeck.name,
             deckBoxColor = defaultDeck.deckBoxColor
         )
+    }
+
+    fun changeSelectedDeck(id: Int){
+        viewModelScope.launch {
+            selectedDeckRepository.changeSelectedDeck(id)
+        }
     }
 
     companion object {

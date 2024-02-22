@@ -76,6 +76,7 @@ fun searchScreen(
                 )
             is CardListUiState.Error -> null
             is CardListUiState.Loading -> null
+            is CardListUiState.NoResults -> NoResultsMessage()
         }
     }
 }
@@ -150,11 +151,10 @@ fun cardList(
             state = state,
             modifier = modifier.fillMaxSize()
         ) {
-            items(cardList.data) {  entry ->
-                cardEntry(entry, { onClick(it) })
+            items(cardList.data) { entry ->
+                    cardEntry(entry, { onClick(it) })
             }
         }
-
     }
 }
 
@@ -192,10 +192,6 @@ fun loadPrevious(
     }
 
 }
-@Composable
-fun textComp(page: String?){
-    Text(text = page?: "")
-}
 
 @Composable
 fun cardEntry(
@@ -215,4 +211,9 @@ fun cardEntry(
             contentDescription = null,
         )
     }
+}
+
+@Composable
+fun NoResultsMessage(){
+    Text("No results")
 }
