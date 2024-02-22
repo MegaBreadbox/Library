@@ -14,6 +14,10 @@ import com.example.mtgdeckbuilder.data.CardListRepository
 import com.example.mtgdeckbuilder.network.Card
 import com.example.mtgdeckbuilder.network.CardList
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,6 +37,9 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
     var cardListUiState : CardListUiState by mutableStateOf(CardListUiState.Loading)
         private set
 
+    private val _errorPresent = MutableStateFlow(false)
+    val errorPresent = _errorPresent.asStateFlow()
+
     var userText by mutableStateOf("")
         private set
 
@@ -47,13 +54,16 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
     fun initializeCardList(input: String) {
         viewModelScope.launch {
             cardListUiState = try {
-                delay(50)
+                delay(QUERY_DELAY)
                 currentCardList = cardListRepository.getCardList(input)
                 addToList(currentCardList)
+                changeErrorState(error = false)
                 CardListUiState.Success(cardList = currentCardList)
             } catch (e: IOException) {
+                changeErrorState(error = true)
                 CardListUiState.Error
             } catch (e: HttpException) {
+                changeErrorState(error = true)
                 CardListUiState.NoResults
             }
         }
@@ -63,7 +73,7 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
         viewModelScope.launch {
             cardListUiState = try {
                 loadingImage = true
-                delay(50)
+                delay(QUERY_DELAY)
                 if(currentCardList.hasMore) {
                     nextPageCardList =
                         cardListRepository.nextPage(currentCardList.nextPage)
@@ -83,7 +93,7 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
     fun previousPage() {
         viewModelScope.launch {
             cardListUiState = try {
-                delay(50)
+                delay(QUERY_DELAY)
                 if(cardPages.size > 1){
                     removeLatest()
                     currentCardList = cardPages[cardPages.size - 1]
@@ -96,6 +106,10 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
             }
         }
     }
+    fun changeErrorState(error: Boolean){
+        _errorPresent.update{ error }
+    }
+
     fun cardToJson(input: Card): String {
         return URLEncoder.encode(Json.encodeToString(input), "utf-8")
     }
@@ -113,6 +127,9 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
 
     fun updateUserText(input: String) {
         userText = input
+    }
+    companion object{
+        const val  QUERY_DELAY = 50L
     }
 
 }

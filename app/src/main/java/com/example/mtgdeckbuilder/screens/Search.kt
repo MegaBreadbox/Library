@@ -27,10 +27,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,6 +62,8 @@ fun searchScreen(
     detailNavigation: (String) -> Unit,
     searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
+    val errorPresent by searchViewModel.errorPresent.collectAsState()
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -63,6 +71,7 @@ fun searchScreen(
             inputText = searchViewModel.userText,
             onTextChange = { searchViewModel.updateUserText(it) },
             onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) },
+            searchError = errorPresent
         )
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding)))
         when (val searchUiState = searchViewModel.cardListUiState) {
@@ -87,6 +96,7 @@ fun searchScreen(
 @Composable
 fun searchBar(
     inputText: String,
+    searchError: Boolean,
     onTextChange: (String) -> Unit,
     onKeyboardSearch: () -> Unit,
     modifier: Modifier = Modifier
@@ -99,6 +109,7 @@ fun searchBar(
         OutlinedTextField(
             value = inputText,
             singleLine = true,
+            isError = searchError,
             onValueChange = { input -> onTextChange(input) },
             label = { Text(stringResource(R.string.search_for_cards)) },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -165,7 +176,7 @@ fun load(
     initializePage: () -> Unit,
     resetPosition: () -> Unit
 ) {
-    Button(
+    OutlinedButton(
         enabled = !currentlyLoading,
         onClick = { initializePage(); resetPosition(); }
     ) {
@@ -182,7 +193,7 @@ fun loadPrevious(
     resetPosition: () -> Unit,
     pageListSize: Int
 ) {
-    Button(
+    OutlinedButton(
         enabled = pageListSize > 1 && !currentlyLoading,
         onClick = { loadPreviousPage(); resetPosition() }
     ) {
@@ -201,9 +212,14 @@ fun cardEntry(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.clickable() {
-            onClick(card)
-        }
+        modifier = modifier
+            .clickable() {
+                onClick(card)
+            }
+            .padding(
+                top = dimensionResource(R.dimen.small_padding),
+                end = dimensionResource(R.dimen.small_padding)
+            )
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
@@ -215,6 +231,16 @@ fun cardEntry(
 }
 
 @Composable
-fun NoResultsMessage(){
-    Text("No results")
+fun NoResultsMessage(
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "No results",
+            color = MaterialTheme.colorScheme.error
+        )
+    }
 }
