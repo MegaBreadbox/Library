@@ -9,12 +9,12 @@ data class CardList (
     val hasMore: Boolean,
     @SerialName(value = "next_page")
     val nextPage: String?,
-    val data: Array<Card>
+    val data: Array<TradingCard>
 
 )
 
 @Serializable
-data class Card (
+data class TradingCard (
     @SerialName(value = "image_uris")
     val imageUris: CardImage?,
     val cmc: Float?,

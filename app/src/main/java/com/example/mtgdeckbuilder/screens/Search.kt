@@ -2,7 +2,6 @@ package com.example.mtgdeckbuilder.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,32 +12,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowForward
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,14 +36,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mtgdeckbuilder.R
 import com.example.mtgdeckbuilder.ViewModelProvider
-import com.example.mtgdeckbuilder.network.Card
-import com.example.mtgdeckbuilder.network.CardImage
+import com.example.mtgdeckbuilder.network.TradingCard
 import com.example.mtgdeckbuilder.network.CardList
 import kotlinx.coroutines.launch
 
@@ -63,6 +51,7 @@ fun searchScreen(
     searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
     val errorPresent by searchViewModel.errorPresent.collectAsState()
+    val searchUiState = searchViewModel.cardListUiState
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -73,8 +62,10 @@ fun searchScreen(
             onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) },
             searchError = errorPresent
         )
+
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding)))
-        when (val searchUiState = searchViewModel.cardListUiState) {
+
+        when (searchUiState) {
             is CardListUiState.Success ->
                 cardList(
                     initializePage = { searchViewModel.nextPage() },
@@ -86,7 +77,12 @@ fun searchScreen(
 
                 )
             is CardListUiState.Error -> null
-            is CardListUiState.Loading -> null
+            is CardListUiState.Loading ->
+                Divider(modifier = Modifier.padding(
+                    start = dimensionResource(R.dimen.medium_padding),
+                    end = dimensionResource(R.dimen.medium_padding)
+                    )
+                )
             is CardListUiState.NoResults -> NoResultsMessage()
         }
     }
@@ -130,7 +126,7 @@ fun cardList(
     cardList: CardList,
     currentlyLoading: Boolean,
     pageListSize: Int,
-    onClick: (Card) -> Unit,
+    onClick: (TradingCard) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state = rememberLazyStaggeredGridState()
@@ -158,15 +154,24 @@ fun cardList(
                 resetPosition = { coroutineScope.launch { state.scrollToItem(0) } }
             )
         }
+        Divider(
+            modifier = Modifier.padding(
+                start = dimensionResource(R.dimen.medium_padding),
+                end = dimensionResource(R.dimen.medium_padding),
+                top = dimensionResource(R.dimen.small_padding),
+                bottom = dimensionResource(R.dimen.small_padding)
+            )
+        )
         LazyHorizontalStaggeredGrid(
             rows = StaggeredGridCells.Adaptive(minSize = dimensionResource(R.dimen.card_image)),
             state = state,
             modifier = modifier.fillMaxSize()
         ) {
             items(cardList.data) { entry ->
-                    cardEntry(entry, { onClick(it) })
+                cardEntry(entry, { onClick(it) })
             }
         }
+
     }
 }
 
@@ -207,14 +212,14 @@ fun loadPrevious(
 
 @Composable
 fun cardEntry(
-    card: Card,
-    onClick: (Card) -> Unit,
+    tradingCard: TradingCard,
+    onClick: (TradingCard) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .clickable() {
-                onClick(card)
+                onClick(tradingCard)
             }
             .padding(
                 top = dimensionResource(R.dimen.small_padding),
@@ -223,7 +228,7 @@ fun cardEntry(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(card.imageUris?.large)
+                .data(tradingCard.imageUris?.large)
                 .build(),
             contentDescription = null,
         )

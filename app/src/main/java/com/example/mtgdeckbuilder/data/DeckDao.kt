@@ -7,8 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.example.mtgdeckbuilder.network.Card
-import com.example.mtgdeckbuilder.network.CardList
 import kotlinx.coroutines.flow.Flow
 
 @Dao

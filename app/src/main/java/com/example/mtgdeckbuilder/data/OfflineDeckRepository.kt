@@ -1,6 +1,5 @@
 package com.example.mtgdeckbuilder.data
 
-import com.example.mtgdeckbuilder.network.Card
 import kotlinx.coroutines.flow.Flow
 
 class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {

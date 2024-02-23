@@ -5,4 +5,5 @@
     <dimen name="large_padding">16dp</dimen>
     <dimen name="deck_image">128dp</dimen>
     <dimen name="card_image">240dp</dimen>
+    <dimen name="number_of_cards_textfield">90dp</dimen>
 </resources>

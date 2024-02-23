@@ -4,18 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.mtgdeckbuilder.CardListApplication
 import com.example.mtgdeckbuilder.data.CardListRepository
-import com.example.mtgdeckbuilder.network.Card
+import com.example.mtgdeckbuilder.network.TradingCard
 import com.example.mtgdeckbuilder.network.CardList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -110,7 +104,7 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
         _errorPresent.update{ error }
     }
 
-    fun cardToJson(input: Card): String {
+    fun cardToJson(input: TradingCard): String {
         return URLEncoder.encode(Json.encodeToString(input), "utf-8")
     }
 
