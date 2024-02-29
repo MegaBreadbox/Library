@@ -3,8 +3,8 @@ package com.example.mtgdeckbuilder.data
 import kotlinx.coroutines.flow.Flow
 
 class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {
-    override suspend fun addDeck(deck: Deck): Long {
-        return deckDao.addDeck(deck)
+    override suspend fun addDeckCardsCrossRef(deckCardCrossRefList: List<DeckCardCrossRef>) {
+       deckDao.addDeckCardsCrossRef(deckCardCrossRefList)
     }
 
     override suspend fun removeDeck(deck: Deck) {
@@ -19,12 +19,20 @@ class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {
         deckDao.createDeck(name, deckBoxColor)
     }
 
+    override suspend fun createCard(databaseCardList: List<DatabaseCard>): List<Long> {
+        return deckDao.createCard(databaseCardList)
+    }
+
     override fun getDeckListStream(): Flow<List<Deck>> {
         return deckDao.getDeckList()
     }
 
-    override fun getDeckWithCards(): Flow<List<DeckWithCards>> {
-        return deckDao.getDeckWithCards()
+    override fun getDeckWithCards(deckId: Int): Flow<List<DeckWithCards>> {
+        return deckDao.getDeckWithCards(deckId)
+    }
+
+    override fun getTotalCardCopies(name: String, deckId: Int): Int {
+        return deckDao.getTotalCardCopies(name, deckId)
     }
 
 }

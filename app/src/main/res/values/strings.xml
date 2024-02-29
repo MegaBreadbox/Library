@@ -6,4 +6,6 @@
     <string name="pageNumber">Page %1$s</string>
     <string name="add_deck">add deck</string>
     <string name="add_card_to_deck">Add card to deck</string>
+    <string name="add_deck_fab">" Add deck"</string>
+    <string name="deck">Deck</string>
 </resources>

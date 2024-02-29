@@ -2,6 +2,7 @@ package com.example.mtgdeckbuilder.data
 
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.Junction
 import androidx.room.PrimaryKey
 import androidx.room.Relation
@@ -18,11 +19,13 @@ data class Deck(
 data class DatabaseCard(
     @PrimaryKey(autoGenerate = true)
     val cardId: Int = 0,
+    val scryfallId: String,
+    val name: String,
     val imageNormal: String?,
     val imageLarge: String?,
     val imagePng: String?,
     val cmc: Float?,
-    val colorIdentity: String
+    val colorIdentity: Array<String>
 )
 
 @Entity(primaryKeys = ["deckId", "cardId"])

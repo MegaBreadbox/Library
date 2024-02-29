@@ -1,5 +1,8 @@
 package com.example.mtgdeckbuilder.screens
 
+import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mtgdeckbuilder.R
@@ -51,4 +54,3 @@ class DeckListViewModel(
 data class DeckListUiState(
     val deckList: List<Deck> = listOf()
 )
-

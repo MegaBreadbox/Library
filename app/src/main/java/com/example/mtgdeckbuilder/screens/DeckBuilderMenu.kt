@@ -52,7 +52,7 @@ fun DeckBuilderMenu(
 
             ) {
                 val card = it.arguments?.getString("card") ?: ""
-                detailsScreen(card)
+                DetailsScreen(card)
             }
         }
     }

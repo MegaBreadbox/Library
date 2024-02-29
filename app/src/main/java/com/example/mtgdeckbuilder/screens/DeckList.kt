@@ -3,6 +3,7 @@ package com.example.mtgdeckbuilder.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -48,7 +50,7 @@ fun deckListScreen(
         Scaffold(
             modifier = modifier,
             floatingActionButton = {
-                FloatingActionButton(
+                ExtendedFloatingActionButton(
                     onClick = {
                               coroutineScope.launch{
                                   deckListViewModel.createDeck()
@@ -59,6 +61,9 @@ fun deckListScreen(
                     Icon(
                         imageVector = Icons.Rounded.Add,
                         contentDescription = stringResource(R.string.add_deck)
+                    )
+                    Text(
+                        text = stringResource(R.string.add_deck_fab),
                     )
                 }
             }

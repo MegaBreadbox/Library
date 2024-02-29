@@ -15,6 +15,9 @@ data class CardList (
 
 @Serializable
 data class TradingCard (
+    @SerialName(value = "id")
+    val scryfallId: String,
+    val name: String,
     @SerialName(value = "image_uris")
     val imageUris: CardImage?,
     val cmc: Float?,

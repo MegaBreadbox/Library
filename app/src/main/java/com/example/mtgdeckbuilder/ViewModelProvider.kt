@@ -5,9 +5,11 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mtgdeckbuilder.screens.DeckListViewModel
+import com.example.mtgdeckbuilder.screens.DetailsViewModel
 import com.example.mtgdeckbuilder.screens.SearchViewModel
+import kotlinx.coroutines.Dispatchers
 
- object ViewModelProvider {
+object ViewModelProvider {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
         initializer {
             SearchViewModel(deckBuilderApplication().container.cardListRepository)
@@ -17,6 +19,14 @@ import com.example.mtgdeckbuilder.screens.SearchViewModel
             DeckListViewModel(
                 deckBuilderApplication().container.deckRepository,
                 deckBuilderApplication().container.selectedDeckRepository
+            )
+        }
+
+        initializer {
+            DetailsViewModel(
+                deckBuilderApplication().container.selectedDeckRepository,
+                deckBuilderApplication().container.deckRepository,
+                Dispatchers.IO
             )
         }
 
