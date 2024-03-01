@@ -18,6 +18,4 @@ interface DeckRepository {
 
     fun getDeckWithCards(deckId: Int): Flow<List<DeckWithCards>>
 
-    fun getTotalCardCopies(name: String, deckId: Int): Int
-
 }

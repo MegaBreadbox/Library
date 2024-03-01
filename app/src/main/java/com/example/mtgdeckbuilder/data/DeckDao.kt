@@ -1,5 +1,6 @@
 package com.example.mtgdeckbuilder.data
 
+import android.adservices.adid.AdId
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -27,11 +28,7 @@ interface DeckDao {
     @Query("SELECT * FROM Deck ORDER BY name ASC")
     fun getDeckList(): Flow<List<Deck>>
     @Transaction
-    @Query("SELECT * FROM Deck WHERE :deckId = deckId")
+    @Query("SELECT * FROM Deck WHERE deckId = :deckId")
     fun getDeckWithCards(deckId: Int): Flow<List<DeckWithCards>>
-
-    @Transaction
-    @Query("SELECT COUNT(*) FROM DECK WHERE :name = name AND :deckId = deckId")
-    fun getTotalCardCopies(name: String, deckId: Int): Int
 
 }

@@ -1,5 +1,7 @@
 package com.example.mtgdeckbuilder.screens
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,9 +26,12 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -47,6 +52,9 @@ import com.example.mtgdeckbuilder.ViewModelProvider
 import com.example.mtgdeckbuilder.network.CardImage
 import com.example.mtgdeckbuilder.network.TradingCard
 import com.example.mtgdeckbuilder.ui.theme.MTGDeckBuilderTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
@@ -58,31 +66,37 @@ fun DetailsScreen(
     val tradingCard = detailsViewModel.decodeFromString(cardString)
     val maxCardsAllowed = detailsViewModel.maxLegalCards.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-
+    Log.d("InitialRecomp", "${maxCardsAllowed.value}")
     CardDetails(
         tradingCard = tradingCard,
         isMenuEnabled = detailsViewModel.menuState,
         amountToAdd = detailsViewModel.amountToAdd,
-        onMenuClick =  { detailsViewModel.changeMenuState() },
+        onMenuClick = { detailsViewModel.changeMenuState() },
         maxCardsAllowed = {
             coroutineScope.launch {
                 detailsViewModel.maxCardsAllowed(
-                    tradingCardName = tradingCard.name,
                     scryfallId = tradingCard.scryfallId
                 )
             }
             maxCardsAllowed.value
         },
+        isButtonDisabled = { maxCardsAllowed.value != 0},
         onButtonClick = {
-            coroutineScope.launch {
-                detailsViewModel.addCardsToDeck(
+             coroutineScope.launch{
+                 Log.d("Button Clicked", "${maxCardsAllowed.value}")
+                 detailsViewModel.addCardsToDeck(
                     tradingCard = tradingCard,
                     copiesNeeded = detailsViewModel.amountToAdd
-                )
-                detailsViewModel.updateAmountToAdd(detailsViewModel.amountToAdd)
+                 )
+                 detailsViewModel.maxCardsAllowed(tradingCard.scryfallId)
+                 detailsViewModel.updateAmountToAdd(detailsViewModel.amountToAdd)
+
             }
         },
-        onMenuItemClick = { detailsViewModel.updateAmountToAdd(it) }
+        onMenuItemClick = {
+            detailsViewModel.changeMenuState()
+            detailsViewModel.updateAmountToAdd(it)
+        }
     )
 }
 
@@ -94,6 +108,7 @@ fun CardDetails(
     amountToAdd: Int,
     onMenuClick: () -> Unit,
     maxCardsAllowed: () -> Int?,
+    isButtonDisabled: () -> Boolean,
     onButtonClick: () -> Unit,
     onMenuItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -109,6 +124,7 @@ fun CardDetails(
             onMenuClick = onMenuClick,
             amountToAdd = amountToAdd,
             maxCardsAllowed = maxCardsAllowed,
+            isButtonDisabled = isButtonDisabled,
             onButtonClick = onButtonClick,
             onMenuItemClick = { onMenuItemClick(it) },
             modifier = modifier.padding(dimensionResource(R.dimen.large_padding)))
@@ -137,6 +153,7 @@ fun AddToDeck(
     amountToAdd: Int,
     onMenuClick: () -> Unit,
     onButtonClick: () -> Unit,
+    isButtonDisabled: () -> Boolean,
     maxCardsAllowed: () -> Int?,
     onMenuItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -144,10 +161,18 @@ fun AddToDeck(
     Card(
         modifier = modifier
     ){
-        Text(
-            text ="How many would you like to add to the Deck?",
-            modifier = modifier
-        )
+        if(maxCardsAllowed()?.let { it <= 0} == true) {
+           Text(
+               text = "Reached card limit in deck",
+               color = MaterialTheme.colorScheme.error,
+               modifier = modifier
+           )
+        } else {
+            Text(
+                text = "How many would you like to add to the Deck?",
+                modifier = modifier
+            )
+        }
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
@@ -155,7 +180,7 @@ fun AddToDeck(
             OutlinedTextField(
                 value = amountToAdd.toString(),
                 onValueChange = {  },
-
+                readOnly = true,
                 trailingIcon = { CardNumberSelection(
                     isMenuEnabled = isMenuEnabled,
                     onMenuClick = onMenuClick,
@@ -165,6 +190,7 @@ fun AddToDeck(
                 modifier = modifier.width(dimensionResource(R.dimen.number_of_cards_textfield))
             )
             Button(
+                enabled = isButtonDisabled(),
                 onClick = { onButtonClick() },
                 modifier = modifier
             ) {

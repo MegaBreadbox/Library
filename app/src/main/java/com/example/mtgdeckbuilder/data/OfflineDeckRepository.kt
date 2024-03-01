@@ -31,8 +31,4 @@ class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {
         return deckDao.getDeckWithCards(deckId)
     }
 
-    override fun getTotalCardCopies(name: String, deckId: Int): Int {
-        return deckDao.getTotalCardCopies(name, deckId)
-    }
-
 }
