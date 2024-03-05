@@ -8,4 +8,8 @@
     <string name="add_card_to_deck">Add card to deck</string>
     <string name="add_deck_fab">" Add deck"</string>
     <string name="deck">Deck</string>
+    <string name="menu">Menu</string>
+    <string name="edit_deck_color">edit deck color</string>
+    <string name="search_for_new_cards">Search for new cards</string>
+    <string name="search_cards">Search cards</string>
 </resources>

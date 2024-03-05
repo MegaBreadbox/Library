@@ -14,6 +14,8 @@ interface DeckRepository {
 
     suspend fun createCard(databaseCardList: List<DatabaseCard>): List<Long>
 
+    fun getDeck(deckId: Int): Flow<Deck>
+
     fun getDeckListStream(): Flow<List<Deck>>
 
     fun getDeckWithCards(deckId: Int): Flow<List<DeckWithCards>>

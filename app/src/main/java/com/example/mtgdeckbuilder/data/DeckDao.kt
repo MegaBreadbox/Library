@@ -21,6 +21,9 @@ interface DeckDao {
     suspend fun updateName(deck: Deck)
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun createCard(databaseCardList: List<DatabaseCard>): List<Long>
+
+    @Query("SELECT * FROM Deck WHERE deckId = :deckId")
+    fun getDeck(deckId: Int): Flow<Deck>
     @Query("INSERT OR IGNORE INTO Deck (name, deckBoxColor) " +
             "VALUES (:name || ' ' || (SELECT COUNT(*) + 1 FROM Deck), :deckBoxColor)")
     suspend fun createDeck(name: String, deckBoxColor: Int)

@@ -23,6 +23,10 @@ class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {
         return deckDao.createCard(databaseCardList)
     }
 
+    override fun getDeck(deckId: Int): Flow<Deck> {
+        return deckDao.getDeck(deckId)
+    }
+
     override fun getDeckListStream(): Flow<List<Deck>> {
         return deckDao.getDeckList()
     }

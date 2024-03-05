@@ -68,7 +68,6 @@ class DetailsViewModel(
                     _maxLegalCards.update { null }
                 } else {
                     _maxLegalCards.update {
-                        Log.d("Proccd", "${_maxLegalCards.value}")
                         LEGAL_CARD_LIMIT.minus(deckRepository.getDeckWithCards(deckId)
                             .first()
                             .flatMap {

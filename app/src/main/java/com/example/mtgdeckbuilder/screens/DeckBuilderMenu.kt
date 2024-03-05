@@ -14,6 +14,7 @@ import androidx.navigation.navArgument
 
 enum class CardListScreen() {
     Deck,
+    CardList,
     Search,
     Details
 }
@@ -32,12 +33,17 @@ fun DeckBuilderMenu(
             modifier = Modifier.padding(padding)
         ){
             composable(CardListScreen.Deck.name) {
-                deckListScreen(
-                    searchNavigation = { navController.navigate(CardListScreen.Search.name) }
+                DeckListScreen(
+                    cardListNavigation = { navController.navigate(CardListScreen.CardList.name) }
+                )
+            }
+            composable(CardListScreen.CardList.name) {
+                CurrentCardList(
+                    searchNavigation = { navController.navigate(CardListScreen.Search.name)}
                 )
             }
             composable(CardListScreen.Search.name) {
-                searchScreen(
+                SearchScreen(
                     detailNavigation = { navController.navigate(
                          "${CardListScreen.Details.name}/$it") },
                 )

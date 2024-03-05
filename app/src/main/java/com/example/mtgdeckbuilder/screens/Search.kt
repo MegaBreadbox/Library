@@ -46,7 +46,7 @@ import com.example.mtgdeckbuilder.network.CardList
 import kotlinx.coroutines.launch
 
 @Composable
-fun searchScreen(
+fun SearchScreen(
     detailNavigation: (String) -> Unit,
     searchViewModel: SearchViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {

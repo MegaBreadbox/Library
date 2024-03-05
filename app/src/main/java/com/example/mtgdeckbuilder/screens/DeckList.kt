@@ -3,18 +3,15 @@ package com.example.mtgdeckbuilder.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,18 +25,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mtgdeckbuilder.Greeting
 import com.example.mtgdeckbuilder.R
 import com.example.mtgdeckbuilder.ViewModelProvider
 import com.example.mtgdeckbuilder.data.Deck
 import com.example.mtgdeckbuilder.ui.theme.MTGDeckBuilderTheme
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun deckListScreen(
-    searchNavigation: () -> Unit,
+fun DeckListScreen(
+    cardListNavigation: () -> Unit,
     modifier: Modifier = Modifier,
     deckListViewModel: DeckListViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
@@ -70,7 +65,7 @@ fun deckListScreen(
         ) { innerPadding ->
             deckList(
                 deckList = deckListUiState.deckList,
-                searchNavigation = searchNavigation,
+                searchNavigation = cardListNavigation,
                 changeCurrentDeck = { deckListViewModel.changeSelectedDeck(it) },
                 modifier = modifier.padding(innerPadding)
             )
