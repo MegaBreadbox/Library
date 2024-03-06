@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -66,7 +67,6 @@ fun DetailsScreen(
     val tradingCard = detailsViewModel.decodeFromString(cardString)
     val maxCardsAllowed = detailsViewModel.maxLegalCards.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    Log.d("InitialRecomp", "${maxCardsAllowed.value}")
     CardDetails(
         tradingCard = tradingCard,
         isMenuEnabled = detailsViewModel.menuState,
@@ -83,7 +83,6 @@ fun DetailsScreen(
         isButtonDisabled = { maxCardsAllowed.value != 0},
         onButtonClick = {
              coroutineScope.launch{
-                 Log.d("Button Clicked", "${maxCardsAllowed.value}")
                  detailsViewModel.addCardsToDeck(
                     tradingCard = tradingCard,
                     copiesNeeded = detailsViewModel.amountToAdd
@@ -163,13 +162,13 @@ fun AddToDeck(
     ){
         if(maxCardsAllowed()?.let { it <= 0} == true) {
            Text(
-               text = "Reached card limit in deck",
+               text = stringResource(R.string.reached_card_limit_in_deck),
                color = MaterialTheme.colorScheme.error,
                modifier = modifier
            )
         } else {
             Text(
-                text = "How many would you like to add to the Deck?",
+                text = stringResource(R.string.how_many_would_you_like_to_add_to_the_deck),
                 modifier = modifier
             )
         }
@@ -196,10 +195,10 @@ fun AddToDeck(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
-                    contentDescription = "Add to deck"
+                    contentDescription = stringResource(R.string.add_to_deck)
                 )
                 Text(
-                    text = " Card"
+                    text = stringResource(R.string.card)
                 )
             }
         }
@@ -217,7 +216,7 @@ fun CardNumberSelection(
     Box {
         Icon(
             imageVector = Icons.Rounded.ArrowDropDown,
-            contentDescription = "Quantity of cards to add",
+            contentDescription = stringResource(R.string.quantity_of_cards_to_add),
             modifier = modifier.clickable { onMenuClick() }
         )
         CardSelectionMenu(

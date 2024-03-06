@@ -12,4 +12,13 @@
     <string name="edit_deck_color">edit deck color</string>
     <string name="search_for_new_cards">Search for new cards</string>
     <string name="search_cards">Search cards</string>
+    <string name="quantity_of_cards_to_add">Quantity of cards to add</string>
+    <string name="add_to_deck">Add to deck</string>
+    <string name="card">" Card"</string>
+    <string name="reached_card_limit_in_deck">Reached card limit in deck</string>
+    <string name="how_many_would_you_like_to_add_to_the_deck">How many would you like to add to the Deck?</string>
+    <string name="delete_cards">Delete cards</string>
+    <string name="delete_deck">Delete deck</string>
+    <string name="delete_deck_confirmation">Are you sure you wish to delete this deck?</string>
+    <string name="confirm">Confirm</string>
 </resources>

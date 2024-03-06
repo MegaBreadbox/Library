@@ -19,7 +19,8 @@ object ViewModelProvider {
         initializer {
             CardListViewModel(
                 deckBuilderApplication().container.deckRepository,
-                deckBuilderApplication().container.selectedDeckRepository
+                deckBuilderApplication().container.selectedDeckRepository,
+                Dispatchers.IO
             )
         }
 

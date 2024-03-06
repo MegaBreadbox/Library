@@ -65,8 +65,12 @@ fun DeckListScreen(
         ) { innerPadding ->
             deckList(
                 deckList = deckListUiState.deckList,
-                searchNavigation = cardListNavigation,
-                changeCurrentDeck = { deckListViewModel.changeSelectedDeck(it) },
+                changeCurrentDeck = {
+                    coroutineScope.launch {
+                        deckListViewModel.changeSelectedDeck(it)
+                        cardListNavigation()
+                    }
+                },
                 modifier = modifier.padding(innerPadding)
             )
         }
@@ -76,7 +80,6 @@ fun DeckListScreen(
 @Composable
 fun deckList(
     deckList: List<Deck>,
-    searchNavigation: () -> Unit,
     changeCurrentDeck: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -84,7 +87,7 @@ fun deckList(
         columns = GridCells.Adaptive(minSize = dimensionResource(R.dimen.deck_image)),
     ){
         items(deckList) {deck ->
-            deckEntry(deck, searchNavigation, { changeCurrentDeck(it) })
+            deckEntry(deck, { changeCurrentDeck(it) })
 
         }
     }
@@ -93,13 +96,11 @@ fun deckList(
 @Composable
 fun deckEntry(
     deck: Deck,
-    searchNavigation: () -> Unit,
     changeCurrentDeck: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.clickable(){
-            searchNavigation()
+        modifier = modifier.clickable() {
             changeCurrentDeck(deck.deckId)
         }
 

@@ -14,11 +14,18 @@ import kotlinx.coroutines.flow.Flow
 interface DeckDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addDeckCardsCrossRef(deckCardCrossRefList: List<DeckCardCrossRef>)
+
+    @Delete
+    suspend fun removeDeckCardsCrossRef(deckCardCrossRef: DeckCardCrossRef)
+
+    @Delete
+    suspend fun removeCard(databaseCard: DatabaseCard)
+
     @Delete
     suspend fun removeDeck(deck: Deck)
 
     @Update
-    suspend fun updateName(deck: Deck)
+    suspend fun updateDeck(deck: Deck)
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun createCard(databaseCardList: List<DatabaseCard>): List<Long>
 
@@ -30,6 +37,9 @@ interface DeckDao {
 
     @Query("SELECT * FROM Deck ORDER BY name ASC")
     fun getDeckList(): Flow<List<Deck>>
+
+    @Query("DELETE FROM DeckCardCrossRef WHERE deckId = :deckId")
+    suspend fun removeAllDeckCardCrossRef(deckId: Int)
     @Transaction
     @Query("SELECT * FROM Deck WHERE deckId = :deckId")
     fun getDeckWithCards(deckId: Int): Flow<List<DeckWithCards>>

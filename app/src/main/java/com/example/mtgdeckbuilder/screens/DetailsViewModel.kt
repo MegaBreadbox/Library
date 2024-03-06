@@ -56,7 +56,9 @@ class DetailsViewModel(
     private suspend fun createCard(tradingCard: TradingCard, copiesNeeded: Int): List<Long> {
         val databaseCardList: MutableList<DatabaseCard> = mutableListOf()
         repeat(copiesNeeded) {
-            databaseCardList.add(tradingCard.tradingCardToDatabaseCard())
+            databaseCardList.add(
+                tradingCard.tradingCardToDatabaseCard(selectedDeckRepository.readDeck().first())
+            )
         }
         return deckRepository.createCard(databaseCardList.toList())
     }
@@ -127,9 +129,10 @@ enum class UnrestrictedCardNumber(val scryfallId: String) {
     SNOW_COVERED_PLAINS("afd2730f-878e-47ee-ad2a-73f8fa4e0794"),
 }
 
-fun TradingCard.tradingCardToDatabaseCard(): DatabaseCard {
+fun TradingCard.tradingCardToDatabaseCard(deckId: Int): DatabaseCard {
     return DatabaseCard(
         scryfallId = this.scryfallId,
+        deckNumber = deckId,
         name = this.name,
         imageNormal = this.imageUris?.normal,
         imageLarge = this.imageUris?.large,

@@ -49,6 +49,7 @@ class SearchViewModel(private val cardListRepository: CardListRepository): ViewM
         viewModelScope.launch {
             cardListUiState = try {
                 delay(QUERY_DELAY)
+                cardPages.clear()
                 currentCardList = cardListRepository.getCardList(input)
                 addToList(currentCardList)
                 changeErrorState(error = false)

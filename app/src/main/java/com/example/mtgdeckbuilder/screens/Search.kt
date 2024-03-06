@@ -31,8 +31,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -45,6 +47,7 @@ import com.example.mtgdeckbuilder.network.TradingCard
 import com.example.mtgdeckbuilder.network.CardList
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
     detailNavigation: (String) -> Unit,
@@ -52,14 +55,17 @@ fun SearchScreen(
 ) {
     val errorPresent by searchViewModel.errorPresent.collectAsState()
     val searchUiState = searchViewModel.cardListUiState
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         searchBar(
             inputText = searchViewModel.userText,
             onTextChange = { searchViewModel.updateUserText(it) },
-            onKeyboardSearch = { searchViewModel.initializeCardList(searchViewModel.userText) },
+            onKeyboardSearch = {
+                searchViewModel.initializeCardList(searchViewModel.userText)
+                keyboardController?.hide()
+            },
             searchError = errorPresent
         )
 
@@ -112,7 +118,9 @@ fun searchBar(
                 imeAction = ImeAction.Search
             ),
             keyboardActions = KeyboardActions(
-                onSearch = { onKeyboardSearch() }
+                onSearch = {
+                    onKeyboardSearch()
+                }
             )
         )
     }

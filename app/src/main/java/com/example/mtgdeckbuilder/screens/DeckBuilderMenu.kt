@@ -39,6 +39,7 @@ fun DeckBuilderMenu(
             }
             composable(CardListScreen.CardList.name) {
                 CurrentCardList(
+                    navigateBack = {navController.navigate(CardListScreen.CardList.name)},
                     searchNavigation = { navController.navigate(CardListScreen.Search.name)}
                 )
             }

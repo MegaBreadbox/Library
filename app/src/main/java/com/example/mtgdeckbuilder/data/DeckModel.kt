@@ -1,7 +1,9 @@
 package com.example.mtgdeckbuilder.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.Junction
 import androidx.room.PrimaryKey
@@ -15,10 +17,21 @@ data class Deck(
     val deckBoxColor: Int
 )
 
-@Entity
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Deck::class,
+            parentColumns = arrayOf("deckId"),
+            childColumns = arrayOf("deckNumber"),
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class DatabaseCard(
     @PrimaryKey(autoGenerate = true)
     val cardId: Int = 0,
+    @ColumnInfo(index = true)
+    val deckNumber: Int,
     val scryfallId: String,
     val name: String,
     val imageNormal: String?,

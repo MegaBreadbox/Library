@@ -7,12 +7,20 @@ class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {
        deckDao.addDeckCardsCrossRef(deckCardCrossRefList)
     }
 
+    override suspend fun removeCard(databaseCard: DatabaseCard) {
+       deckDao.removeCard(databaseCard)
+    }
+
+    override suspend fun removeDeckCardsCrossRef(deckCardCrossRef: DeckCardCrossRef) {
+        deckDao.removeDeckCardsCrossRef(deckCardCrossRef)
+    }
+
     override suspend fun removeDeck(deck: Deck) {
         deckDao.removeDeck(deck)
     }
 
-    override suspend fun updateName(deck: Deck) {
-        deckDao.updateName(deck)
+    override suspend fun updateDeck(deck: Deck) {
+        deckDao.updateDeck(deck)
     }
 
     override suspend fun createDeck(name: String, deckBoxColor: Int) {
@@ -25,6 +33,10 @@ class OfflineDeckRepository(private val deckDao: DeckDao): DeckRepository {
 
     override fun getDeck(deckId: Int): Flow<Deck> {
         return deckDao.getDeck(deckId)
+    }
+
+    override suspend fun removeAllDeckCardCrossRef(deckId: Int) {
+        return deckDao.removeAllDeckCardCrossRef(deckId)
     }
 
     override fun getDeckListStream(): Flow<List<Deck>> {

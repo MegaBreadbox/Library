@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@Database(entities = [Deck::class, DatabaseCard::class, DeckCardCrossRef::class], version = 2, exportSchema = false)
+@Database(entities = [Deck::class, DatabaseCard::class, DeckCardCrossRef::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class DeckDatabase: RoomDatabase() {
 

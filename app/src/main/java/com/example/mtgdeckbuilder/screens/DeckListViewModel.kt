@@ -1,5 +1,6 @@
 package com.example.mtgdeckbuilder.screens
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -39,7 +40,6 @@ class DeckListViewModel(
             deckBoxColor = defaultDeck.deckBoxColor
         )
     }
-
     fun changeSelectedDeck(id: Int){
         viewModelScope.launch {
             selectedDeckRepository.changeSelectedDeck(id)
