@@ -1,5 +1,6 @@
 package com.example.mtgdeckbuilder.screens
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Search
@@ -46,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mtgdeckbuilder.ViewModelProvider
+import com.example.mtgdeckbuilder.network.TradingCard
 import com.example.mtgdeckbuilder.ui.theme.MTGDeckBuilderTheme
 import kotlinx.coroutines.launch
 
@@ -104,7 +107,10 @@ fun CurrentCardList(
             modifier = Modifier.padding(it)
         ) {
             CardList(
-                cardList = cardList
+                cardList = cardList,
+                isDeleteEnabled = cardListViewModel.isDeleteCardEnabled,
+                onDeleteCardClick = { coroutineScope.launch { cardListViewModel.deleteCard(it) }}
+
             )
         }
     }
@@ -206,12 +212,15 @@ fun SettingsTopBar(
 @Composable
 fun CardList(
     cardList: List<ViewCard>,
+    isDeleteEnabled: Boolean,
+    onDeleteCardClick: (ViewCard) -> Unit
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(120.dp),
     ){
-        items(cardList, key = {it.cardId}) {
-            it.imagePng?.let { viewCard -> CardEntry(viewCard) }
+        items(cardList, key = {it.cardId}) {viewCard ->
+            viewCard.imagePng?.let {
+                viewCardString -> CardEntry(viewCardString, isDeleteEnabled, { onDeleteCardClick(viewCard) }) }
         }
     }
 }
@@ -219,13 +228,28 @@ fun CardList(
 @Composable
 fun CardEntry(
     tradingCardImage: String,
+    isDeleteEnabled: Boolean,
+    onDeleteCardClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    AsyncImage(
-        model = ImageRequest.Builder(context = LocalContext.current)
-            .data(tradingCardImage)
-            .build(),
-        contentDescription = null,
-    )
+    Box(
+        contentAlignment = Alignment.TopEnd
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(tradingCardImage)
+                .build(),
+            contentDescription = null,
+        )
+        if(isDeleteEnabled) {
+            IconButton(onClick = { onDeleteCardClick() }) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = stringResource(R.string.delete_card)
+                )
+            }
+        }
+    }
 }
 
 @Composable

@@ -1,6 +1,7 @@
 package com.example.mtgdeckbuilder.screens
 
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,12 +14,20 @@ import com.example.mtgdeckbuilder.data.DeckCardCrossRef
 import com.example.mtgdeckbuilder.data.DeckRepository
 import com.example.mtgdeckbuilder.data.SelectedDeckRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMap
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -31,9 +40,28 @@ class CardListViewModel(
     private val _deckUiState = MutableStateFlow(DeckUiState())
     val deckUiState = _deckUiState.asStateFlow()
 
-    private val _cardListUiState = MutableStateFlow(listOf(ViewCard()))
-    val cardListUiState = _cardListUiState.asStateFlow()
+    private val deckId: StateFlow<Int> =
+        selectedDeckRepository.readDeck().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(SUBSCRIBE_DELAY),
+            initialValue = 0
+        )
 
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val cardListUiState: StateFlow<List<ViewCard>> = deckId.flatMapLatest {
+        deckRepository.getDeckWithCards(it).map { listOfCards ->
+            listOfCards.flatMap { deckWithCards ->
+                deckWithCards.cardList.map { dataBaseCard ->
+                    dataBaseCard.toViewCard()
+                }
+            }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(SUBSCRIBE_DELAY),
+        initialValue = listOf(ViewCard())
+    )
     var isMenuEnabled by mutableStateOf(false)
         private set
 
@@ -46,24 +74,11 @@ class CardListViewModel(
     var isDeleteDeckEnabled by mutableStateOf(false)
 
     init {
-        _cardListUiState.update { listOf(ViewCard())}
         _deckUiState.update { DeckUiState() }
         viewModelScope.launch {
             selectedDeckRepository.readDeck().collect() { deckId ->
                 _deckUiState.update {
                     deckRepository.getDeck(deckId).first().toUiState()
-                }
-
-                updateCardListUiState(deckId)
-            }
-        }
-    }
-
-    private suspend fun updateCardListUiState(deckId: Int) {
-        viewModelScope.launch(ioDispatcher) {
-            _cardListUiState.update {
-                deckRepository.getDeckWithCards(deckId).first().flatMap {
-                    it.cardList.map { databaseCard -> databaseCard.toViewCard() }
                 }
             }
         }
@@ -100,15 +115,16 @@ class CardListViewModel(
             DeckCardCrossRef(_deckUiState.value.deckId, viewCard.cardId)
         )
         deckRepository.removeCard(viewCard.toDatabaseCard())
-        updateCardListUiState(_deckUiState.value.deckId)
     }
 
     suspend fun deleteDeck() {
             deckRepository.removeAllDeckCardCrossRef(_deckUiState.value.deckId)
             deckRepository.removeDeck(_deckUiState.value.toDeck())
-            _cardListUiState.update { listOf(ViewCard()) }
     }
 
+    companion object {
+        private const val SUBSCRIBE_DELAY = 5000L
+    }
 
 }
 
