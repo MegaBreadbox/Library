@@ -41,7 +41,14 @@ class DetailsViewModel(
     var menuState by mutableStateOf(false)
        private set
 
+    var unrestrictedCardNumber by mutableStateOf("")
+        private set
 
+    fun updateUnrestrictedCardNumber(amount: String) {
+        unrestrictedCardNumber = amount.filter { it.isDigit() }
+        if(unrestrictedCardNumber.isNotEmpty())
+            amountToAdd = unrestrictedCardNumber.toInt()
+    }
     fun updateAmountToAdd(amount: Int) {
         amountToAdd = amount
     }
@@ -104,6 +111,7 @@ class DetailsViewModel(
             }
         }
     }
+
     suspend fun addCardsToDeck(tradingCard: TradingCard, copiesNeeded: Int) {
         try {
             addCardToDeckList(createCard(tradingCard, copiesNeeded))

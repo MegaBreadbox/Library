@@ -1,6 +1,9 @@
 package com.example.mtgdeckbuilder.screens
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -233,8 +236,9 @@ fun CardEntry(
     modifier: Modifier = Modifier
 ) {
     Box(
-        contentAlignment = Alignment.TopEnd
+        contentAlignment = Alignment.TopEnd,
     ) {
+        
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
                 .data(tradingCardImage)
@@ -242,7 +246,7 @@ fun CardEntry(
             contentDescription = null,
         )
         if(isDeleteEnabled) {
-            IconButton(onClick = { onDeleteCardClick() }) {
+            IconButton(onClick = { onDeleteCardClick()}) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
                     contentDescription = stringResource(R.string.delete_card)

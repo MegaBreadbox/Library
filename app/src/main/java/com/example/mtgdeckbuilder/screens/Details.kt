@@ -71,6 +71,8 @@ fun DetailsScreen(
         tradingCard = tradingCard,
         isMenuEnabled = detailsViewModel.menuState,
         amountToAdd = detailsViewModel.amountToAdd,
+        unrestrictedCardNumber = detailsViewModel.unrestrictedCardNumber,
+        unrestrictedCardEntry = { detailsViewModel.updateUnrestrictedCardNumber(it)},
         onMenuClick = { detailsViewModel.changeMenuState() },
         maxCardsAllowed = {
             coroutineScope.launch {
@@ -105,6 +107,8 @@ fun CardDetails(
     tradingCard: TradingCard,
     isMenuEnabled: Boolean,
     amountToAdd: Int,
+    unrestrictedCardNumber: String,
+    unrestrictedCardEntry: (String) -> Unit,
     onMenuClick: () -> Unit,
     maxCardsAllowed: () -> Int?,
     isButtonDisabled: () -> Boolean,
@@ -122,11 +126,14 @@ fun CardDetails(
             isMenuEnabled = isMenuEnabled,
             onMenuClick = onMenuClick,
             amountToAdd = amountToAdd,
+            unrestrictedCardNumber = unrestrictedCardNumber,
+            unrestrictedCardEntry = { unrestrictedCardEntry(it) },
             maxCardsAllowed = maxCardsAllowed,
             isButtonDisabled = isButtonDisabled,
             onButtonClick = onButtonClick,
             onMenuItemClick = { onMenuItemClick(it) },
-            modifier = modifier.padding(dimensionResource(R.dimen.large_padding)))
+            modifier = modifier.padding(dimensionResource(R.dimen.large_padding))
+        )
     }
 }
 @Composable
@@ -150,6 +157,8 @@ fun TradingCardImage(
 fun AddToDeck(
     isMenuEnabled: Boolean,
     amountToAdd: Int,
+    unrestrictedCardNumber: String,
+    unrestrictedCardEntry: (String) -> Unit,
     onMenuClick: () -> Unit,
     onButtonClick: () -> Unit,
     isButtonDisabled: () -> Boolean,
@@ -176,18 +185,28 @@ fun AddToDeck(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            OutlinedTextField(
-                value = amountToAdd.toString(),
-                onValueChange = {  },
-                readOnly = true,
-                trailingIcon = { CardNumberSelection(
-                    isMenuEnabled = isMenuEnabled,
-                    onMenuClick = onMenuClick,
-                    maxCardsAllowed = maxCardsAllowed,
-                    onMenuItemClick = { onMenuItemClick(it) }
-                ) },
-                modifier = modifier.width(dimensionResource(R.dimen.number_of_cards_textfield))
-            )
+            if(maxCardsAllowed() != null) {
+                OutlinedTextField(
+                    value = amountToAdd.toString(),
+                    onValueChange = { },
+                    readOnly = true,
+                    trailingIcon = {
+                        CardNumberSelection(
+                            isMenuEnabled = isMenuEnabled,
+                            onMenuClick = onMenuClick,
+                            maxCardsAllowed = maxCardsAllowed,
+                            onMenuItemClick = { onMenuItemClick(it) }
+                        )
+                    },
+                    modifier = modifier.width(dimensionResource(R.dimen.number_of_cards_textfield))
+                )
+            } else {
+                OutlinedTextField(
+                    value = unrestrictedCardNumber,
+                    onValueChange = { unrestrictedCardEntry(it) },
+                    modifier = modifier.width(dimensionResource(R.dimen.number_of_cards_textfield))
+                )
+            }
             Button(
                 enabled = isButtonDisabled(),
                 onClick = { onButtonClick() },
