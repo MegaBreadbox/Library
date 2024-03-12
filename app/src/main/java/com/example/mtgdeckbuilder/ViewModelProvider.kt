@@ -20,7 +20,6 @@ object ViewModelProvider {
             CardListViewModel(
                 deckBuilderApplication().container.deckRepository,
                 deckBuilderApplication().container.selectedDeckRepository,
-                Dispatchers.IO
             )
         }
 

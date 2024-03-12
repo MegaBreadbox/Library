@@ -2,7 +2,10 @@ package com.example.mtgdeckbuilder.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -23,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mtgdeckbuilder.R
@@ -63,7 +67,7 @@ fun DeckListScreen(
                 }
             }
         ) { innerPadding ->
-            deckList(
+            DeckList(
                 deckList = deckListUiState.deckList,
                 changeCurrentDeck = {
                     coroutineScope.launch {
@@ -78,36 +82,48 @@ fun DeckListScreen(
 }
 
 @Composable
-fun deckList(
+fun DeckList(
     deckList: List<Deck>,
     changeCurrentDeck: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = dimensionResource(R.dimen.deck_image)),
+        contentPadding = PaddingValues(dimensionResource(R.dimen.small_padding)),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
     ){
         items(deckList) {deck ->
-            deckEntry(deck, { changeCurrentDeck(it) })
+            DeckEntry(deck, { changeCurrentDeck(it) })
 
         }
     }
 }
 
 @Composable
-fun deckEntry(
+fun DeckEntry(
     deck: Deck,
     changeCurrentDeck: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.clickable() {
+        modifier = modifier.clickable {
             changeCurrentDeck(deck.deckId)
         }
-
-    ){
-        Image(painter = painterResource(deck.deckBoxColor), contentDescription = null)
+    ){Arrangement.Center
+        Image(
+            painter = painterResource(deck.deckBoxColor),
+            contentDescription = null,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(top = dimensionResource(R.dimen.medium_padding))
+        )
         Text(
-            text = deck.name
+            text = deck.name,
+            textAlign = TextAlign.Center,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(bottom = dimensionResource(R.dimen.small_padding))
         )
     }
 }

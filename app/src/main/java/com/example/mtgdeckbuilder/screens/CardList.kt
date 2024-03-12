@@ -1,9 +1,5 @@
 package com.example.mtgdeckbuilder.screens
 
-import android.util.Log
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +47,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mtgdeckbuilder.ViewModelProvider
-import com.example.mtgdeckbuilder.network.TradingCard
 import com.example.mtgdeckbuilder.ui.theme.MTGDeckBuilderTheme
 import kotlinx.coroutines.launch
 
@@ -72,11 +67,17 @@ fun CurrentCardList(
                 isMenuEnabled = cardListViewModel.isMenuEnabled,
                 isEditEnabled = cardListViewModel.isEditEnabled,
                 isDeleteEnabled = cardListViewModel.isDeleteCardEnabled,
+                selectedColor = deckState.deckBoxColor,
                 onMenuClick = { cardListViewModel.onMenuClick() },
                 onEditClick = { cardListViewModel.onEditClick() },
                 onDeleteCardClick = { cardListViewModel.onDeleteCardClick() },
                 onDeleteDeckClick = { cardListViewModel.onDeleteDeckClick() },
                 deckName = deckState.name,
+                onColorCLick = {
+                    coroutineScope.launch {
+                        cardListViewModel.updateColor(it)
+                    }
+                },
                 changeDeckName = {
                     coroutineScope.launch {
                         cardListViewModel.updateName(it)
@@ -126,10 +127,12 @@ fun SettingsTopBar(
     isEditEnabled: Boolean,
     isDeleteEnabled: Boolean,
     deckName: String,
+    selectedColor: Int,
     onMenuClick: () -> Unit,
     onEditClick: () -> Unit,
     onDeleteCardClick: () -> Unit,
     onDeleteDeckClick: () -> Unit,
+    onColorCLick: (Int) -> Unit,
     changeDeckName: (String) -> Unit,
     modifier: Modifier = Modifier
 ){ Column(
@@ -145,69 +148,156 @@ fun SettingsTopBar(
                 )
             },
             navigationIcon = {
-                Box {
-                    IconButton(
-                        onClick = { onEditClick() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Edit,
-                            contentDescription = stringResource(R.string.edit_deck_color),
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = isEditEnabled,
-                        onDismissRequest = { onEditClick() }
-                    ) {
-                        DropdownMenuItem(text = {  }, onClick = { /*TODO*/ })
-                    }
-                }
+                DeckColorMenu(
+                    isEditEnabled = isEditEnabled,
+                    selectedColor = selectedColor,
+                    onColorCLick = onColorCLick,
+                    onEditClick = onEditClick
+                )
             },
             actions = {
-                Box {
-                    IconButton(
-                        onClick = { onMenuClick() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Menu,
-                            contentDescription = stringResource(R.string.edit_deck_color),
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = isMenuEnabled,
-                        onDismissRequest = { onMenuClick() },
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.delete_cards))},
-                            onClick = {
-                                onDeleteCardClick()
-                                onMenuClick()
-                            },
-                            leadingIcon = {
-                                if(isDeleteEnabled) {
-                                    Icon(Icons.Rounded.Check, contentDescription = null)
-                                }
-                            }
-                        )
-                        DropdownMenuItem(text = {
-                            Text(
-                                text = stringResource(R.string.delete_deck),
-                                textAlign = TextAlign.Right,
-                                modifier = modifier.fillMaxSize()
-                            )
-                        },
-                            onClick = {
-                                onDeleteDeckClick()
-                                onMenuClick()
-                            }
-                        )
-                    }
-                }
-
+                DeleteMenu(
+                    onMenuClick = onMenuClick,
+                    isMenuEnabled = isMenuEnabled,
+                    onDeleteCardClick = onDeleteCardClick,
+                    isDeleteEnabled = isDeleteEnabled,
+                    onDeleteDeckClick = onDeleteDeckClick
+                )
             },
             windowInsets = WindowInsets(0, 0, 0, 0),
         )
         Spacer(modifier = modifier.padding(top = dimensionResource(R.dimen.small_padding)))
         Divider(modifier.padding(dimensionResource(R.dimen.small_padding)))
+    }
+}
+
+@Composable
+fun DeckColorMenu(
+    isEditEnabled: Boolean,
+    selectedColor: Int,
+    onColorCLick: (Int) -> Unit,
+    onEditClick: () -> Unit
+){
+    Box {
+        IconButton(
+            onClick = { onEditClick() }
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Edit,
+                contentDescription = stringResource(R.string.edit_deck_color),
+            )
+        }
+        DropdownMenu(
+            expanded = isEditEnabled,
+            onDismissRequest = { onEditClick() }
+        ) {
+            EditEntry(
+                entryText = stringResource(R.string.grey),
+                entryResourceId = R.drawable.deck_box,
+                onColorClick = onColorCLick,
+                selectedColor = selectedColor
+            )
+            EditEntry(
+                entryText = stringResource(R.string.red),
+                entryResourceId = R.drawable.deck_box_red,
+                onColorClick = onColorCLick,
+                selectedColor = selectedColor
+            )
+            EditEntry(
+                entryText = stringResource(R.string.green),
+                entryResourceId = R.drawable.deck_box_green,
+                onColorClick = onColorCLick,
+                selectedColor = selectedColor
+            )
+            EditEntry(
+                entryText = stringResource(R.string.blue),
+                entryResourceId = R.drawable.deck_box_blue,
+                onColorClick = onColorCLick,
+                selectedColor = selectedColor
+            )
+            EditEntry(
+                entryText = stringResource(R.string.black),
+                entryResourceId = R.drawable.deck_box_black,
+                onColorClick = onColorCLick,
+                selectedColor = selectedColor
+            )
+            EditEntry(
+                entryText = stringResource(R.string.white),
+                entryResourceId = R.drawable.deck_box_white,
+                onColorClick = onColorCLick,
+                selectedColor = selectedColor
+            )
+        }
+    }
+}
+
+@Composable
+fun EditEntry(
+    entryText: String,
+    entryResourceId: Int,
+    onColorClick: (Int) -> Unit,
+    selectedColor: Int
+){
+    DropdownMenuItem(
+        text = { Text(text = entryText)},
+        onClick = { onColorClick(entryResourceId) },
+        leadingIcon = {
+            if(selectedColor == entryResourceId) {
+                Icon(
+                    imageVector = Icons.Rounded.Check,
+                    contentDescription = stringResource(R.string.selected_color)
+                )
+            }
+        }
+    )
+}
+@Composable
+fun DeleteMenu(
+    onMenuClick: () -> Unit,
+    isMenuEnabled: Boolean,
+    onDeleteCardClick: () -> Unit,
+    isDeleteEnabled: Boolean,
+    onDeleteDeckClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Box {
+        IconButton(
+            onClick = { onMenuClick() }
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Menu,
+                contentDescription = stringResource(R.string.edit_deck_color),
+            )
+        }
+        DropdownMenu(
+            expanded = isMenuEnabled,
+            onDismissRequest = { onMenuClick() },
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.delete_cards))},
+                onClick = {
+                    onDeleteCardClick()
+                    onMenuClick()
+                },
+                leadingIcon = {
+                    if(isDeleteEnabled) {
+                        Icon(Icons.Rounded.Check, contentDescription = null)
+                    }
+                }
+            )
+            DropdownMenuItem(text = {
+                Text(
+                    text = stringResource(R.string.delete_deck),
+                    textAlign = TextAlign.Right,
+                    modifier = modifier.fillMaxSize()
+                )
+            },
+                onClick = {
+                    onDeleteDeckClick()
+                    onMenuClick()
+                }
+            )
+        }
     }
 }
 
@@ -233,7 +323,6 @@ fun CardEntry(
     tradingCardImage: String,
     isDeleteEnabled: Boolean,
     onDeleteCardClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Box(
         contentAlignment = Alignment.TopEnd,

@@ -1,63 +1,44 @@
 package com.example.mtgdeckbuilder.screens
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mtgdeckbuilder.R
 import com.example.mtgdeckbuilder.ViewModelProvider
-import com.example.mtgdeckbuilder.network.CardImage
 import com.example.mtgdeckbuilder.network.TradingCard
-import com.example.mtgdeckbuilder.ui.theme.MTGDeckBuilderTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 
 @Composable
 fun DetailsScreen(
@@ -204,7 +185,11 @@ fun AddToDeck(
                 OutlinedTextField(
                     value = unrestrictedCardNumber,
                     onValueChange = { unrestrictedCardEntry(it) },
-                    modifier = modifier.width(dimensionResource(R.dimen.number_of_cards_textfield))
+                    supportingText = { Text(stringResource(R.string.enter_a_number)) },
+                    modifier = modifier.width(dimensionResource(R.dimen.number_of_cards_textfield)),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    )
                 )
             }
             Button(

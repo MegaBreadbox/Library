@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MTG deckBuilder</string>
+    <string name="app_name">Library</string>
     <string name="search_for_cards">Search for cards</string>
     <string name="next_page">next page</string>
     <string name="load_previous">load previous</string>
@@ -22,4 +22,12 @@
     <string name="delete_deck_confirmation">Are you sure you wish to delete this deck?</string>
     <string name="confirm">Confirm</string>
     <string name="delete_card">Delete card</string>
+    <string name="enter_a_number">Number</string>
+    <string name="selected_color">selected color</string>
+    <string name="grey">Grey</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="black">Black</string>
+    <string name="white">White</string>
 </resources>

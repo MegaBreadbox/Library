@@ -1,7 +1,5 @@
 package com.example.mtgdeckbuilder.screens
 
-import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,19 +11,13 @@ import com.example.mtgdeckbuilder.data.Deck
 import com.example.mtgdeckbuilder.data.DeckCardCrossRef
 import com.example.mtgdeckbuilder.data.DeckRepository
 import com.example.mtgdeckbuilder.data.SelectedDeckRepository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -34,7 +26,6 @@ import kotlinx.coroutines.launch
 class CardListViewModel(
     private val deckRepository: DeckRepository,
     private val selectedDeckRepository: SelectedDeckRepository,
-    private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
 
     private val _deckUiState = MutableStateFlow(DeckUiState())
@@ -100,14 +91,23 @@ class CardListViewModel(
         isDeleteDeckEnabled = !isDeleteDeckEnabled
     }
 
-
-    suspend fun updateName(name: String) {
+    suspend fun updateColor(deckResourceId: Int) {
         _deckUiState.update {
             it.copy(
-                name = name
+                deckBoxColor = deckResourceId
             )
         }
         deckRepository.updateDeck(_deckUiState.value.toDeck())
+    }
+    suspend fun updateName(name: String) {
+        if (name.length < 14) {
+            _deckUiState.update {
+                it.copy(
+                    name = name
+                )
+            }
+            deckRepository.updateDeck(_deckUiState.value.toDeck())
+        }
     }
 
     suspend fun deleteCard(viewCard: ViewCard) {
@@ -128,10 +128,6 @@ class CardListViewModel(
 
 }
 
-data class ViewCardCrossRef(
-    val deckId: Int,
-    val cardId: Int
-)
 data class ViewCard(
     val cardId: Int = 0,
     val deckNumber: Int = 0,
@@ -146,15 +142,9 @@ data class ViewCard(
 data class DeckUiState(
     val deckId: Int = 0,
     val name: String = "",
-    val deckBoxColor: Int = R.drawable.deckbox_grey
+    val deckBoxColor: Int = R.drawable.deck_box
 
 )
-
-fun ViewCardCrossRef.toDeckCardCrossRef(): DeckCardCrossRef =
-    DeckCardCrossRef(
-        this.deckId,
-        this.cardId
-    )
 
 fun DatabaseCard.toViewCard(): ViewCard =
     ViewCard(
