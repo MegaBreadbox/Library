@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -65,11 +67,10 @@ class CardListViewModel(
     var isDeleteDeckEnabled by mutableStateOf(false)
 
     init {
-        _deckUiState.update { DeckUiState() }
         viewModelScope.launch {
-            selectedDeckRepository.readDeck().collect() { deckId ->
+            selectedDeckRepository.readDeck().collectLatest { deckId ->
                 _deckUiState.update {
-                    deckRepository.getDeck(deckId).first().toUiState()
+                    deckRepository.getDeck(deckId).filterNotNull().first().toUiState()
                 }
             }
         }
