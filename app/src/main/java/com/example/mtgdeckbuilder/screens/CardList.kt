@@ -363,6 +363,13 @@ fun DeleteAlertDialog(
             ){
                 Text(stringResource(R.string.confirm))
             }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDeleteDeckClick
+            ) {
+                Text(stringResource(R.string.cancel))
+            }
         }
     )
 }
